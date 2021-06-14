@@ -19,6 +19,14 @@ const router = createRouter({
         title: 'Settings',
       },
     },
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('./views/About.vue'),
+      meta: {
+        title: 'About',
+      },
+    },
   ],
 });
 

@@ -8,6 +8,18 @@
   }
 
   a {
-    @apply text-blue-500;
+    @apply text-blue-300 cursor-pointer;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="email"],
+  textarea {
+    @apply rounded bg-gray-200 text-gray-800 outline-none border border-gray-300 focus:border-gray-500;
+  }
+
+  button {
+    @apply px-5 py-3 text-sm shadow-sm font-medium tracking-wider border rounded-full hover:shadow-lg;
   }
 }

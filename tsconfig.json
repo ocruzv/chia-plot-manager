@@ -17,7 +17,8 @@
       "@/*": ["src/render/*", "src/main/*"],
       "root/*": ["/*"]
     },
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
   },
   "include": [
     "src/**/*"
