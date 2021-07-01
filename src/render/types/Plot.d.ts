@@ -1,11 +1,9 @@
 export interface Plot {
-  pid: string;
+  pid: string | number;
   startTime: Date;
-  elapsedTime: Date;
-  tempSize: Date;
-  name: string;
-  tempDir: string;
-  finalDir: string;
+  name?: string;
+  tempDir?: string;
+  finalDir?: string;
   phase: number;
   consoleHistory: string[];
 }

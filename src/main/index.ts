@@ -74,3 +74,9 @@ ipcMain.on('create-plot', async (_, args) => {
     generatePlot(JSON.parse(args), win);
   }
 });
+
+ipcMain.on('stop-plot', async (_, pid) => {
+  if (win) {
+    process.kill(pid);
+  }
+});

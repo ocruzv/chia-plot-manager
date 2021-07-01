@@ -5,7 +5,7 @@
     </header>
     <main class="flex flex-col px-8 py-12 justify-center items-center">
       <div class="w-full bg-gray-500 rounded my-8">
-        <table class="w-full text-center">
+        <table v-if="plots.length" class="w-full text-center">
           <thead>
             <tr>
               <th>PID</th>
@@ -13,38 +13,30 @@
               <th>Elapsed Time</th>
               <th>Phase</th>
               <!-- <th>Progress</th> -->
-              <th>Temp Size</th>
+              <!-- <th>Temp Size</th> -->
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>123</td>
-              <td>10/10/2021 10:21:45</td>
-              <td>01:02:03</td>
-              <td>1</td>
-              <td>200 GiB</td>
-            </tr>
-            <tr>
-              <td>123</td>
-              <td>10/10/2021 10:21:45</td>
-              <td>01:02:03</td>
-              <td>1</td>
-              <td>200 GiB</td>
-            </tr>
-            <tr>
-              <td>123</td>
-              <td>10/10/2021 10:21:45</td>
-              <td>01:02:03</td>
-              <td>1</td>
-              <td>200 GiB</td>
+            <tr v-for="plot in plots" :key="plot.pid">
+              <td>{{ plot.pid }}</td>
+              <td>{{ format(new Date(plot.startTime), 'Pp') }}</td>
+              <td>{{ formatDistanceToNow(new Date(plot.startTime)) }}</td>
+              <td>{{ plot.phase }}/4</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div class="flex flex-row space-x-4">
-        <Button @click="addPlot">Create another plot in parallel</Button>
-        <Button color="red">Cancel plotting</Button>
+        <Button @click="addPlot">
+          <template v-if="plots.length">
+            Create another plot in parallel
+          </template>
+          <template v-else> Start plotting </template>
+        </Button>
+        <Button v-if="plots.length" color="red" @click="stopPlotting"
+          >Stop plotting</Button
+        >
       </div>
     </main>
     <footer class="flex space-x-4 bg-gray-600 items-center justify-center py-4">
@@ -56,12 +48,16 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, unref } from 'vue';
+  import { defineComponent, unref, computed } from 'vue';
   import { useLocalStorage } from '@vueuse/core';
+  import format from 'date-fns/format';
+  import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
   import Button from '@/components/Button.vue';
-  import { createPlot } from '@/helpers/common';
+  import { createPlot, stopPlot } from '@/helpers/common';
   import { PlotSettingsStore } from '@/types/Store';
+
+  import { useMainStore } from '@/stores/main';
 
   export default defineComponent({
     name: 'Index',
@@ -69,6 +65,8 @@
       Button,
     },
     setup() {
+      const store = useMainStore();
+
       const state = useLocalStorage<PlotSettingsStore>('state', {
         poolPublicKey: '',
         farmerPublicKey: '',
@@ -82,8 +80,18 @@
         createPlot(unref(state));
       }
 
+      function stopPlotting() {
+        Object.keys(store.plots).forEach((plotPid) => {
+          stopPlot(plotPid);
+        });
+      }
+
       return {
         addPlot,
+        stopPlotting,
+        plots: computed(() => Object.values(store.plots)),
+        format,
+        formatDistanceToNow,
       };
     },
   });

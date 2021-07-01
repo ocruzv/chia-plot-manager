@@ -11,3 +11,7 @@ export function createPlot(args: PlotSettingsStore): void {
   console.log(args);
   ipc.send('create-plot', JSON.stringify(args));
 }
+
+export function stopPlot(pid: string): void {
+  ipc.send('stop-plot', pid);
+}

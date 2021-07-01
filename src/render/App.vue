@@ -20,9 +20,17 @@
       const store = useMainStore();
 
       onMounted(() => {
-        console.log('mounted');
-        ipc.on('new-plot', (_, args) => {
-          console.log(args);
+        ipc.on('new-plot', (_, pid, plotData) => {
+          store.addPlot(pid, plotData);
+        });
+        ipc.on('set-phase', (_, pid, phase) => {
+          store.updatePlot(pid, { phase });
+        });
+        ipc.on('console-message', (_, pid, data) => {
+          store.addHistoryToPlot(pid, data);
+        });
+        ipc.on('plot-finished', (_, pid) => {
+          store.removePlot(pid);
         });
       });
 

@@ -4,21 +4,23 @@ import { Plot } from '@/types/Plot';
 export const useMainStore = defineStore({
   id: 'main',
   state: () => ({
-    plots: [] as Plot[],
+    plots: {} as { [key: string]: Plot }[],
   }),
   actions: {
     resetPlots() {
       this.plots = [];
     },
-    addPlot(plot: Plot) {
-      this.plots.push(plot);
+    addPlot(pid: string, plot: Plot) {
+      this.plots[pid] = plot;
+    },
+    updatePlot(pid: string, plot: Partial<Plot>) {
+      this.plots[pid] = { ...this.plots[pid], ...plot };
     },
     addHistoryToPlot(pid: string, consoleLine: string) {
-      const index = this.plots.findIndex((plot) => plot.pid === pid);
-      this.plots[index].consoleHistory.push(consoleLine);
+      this.plots[pid].consoleHistory.push(consoleLine);
     },
     removePlot(pid: string) {
-      this.plots = this.plots.filter((plot) => plot.pid !== pid);
+      delete this.plots[pid];
     },
   },
 });
