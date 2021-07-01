@@ -1,5 +1,5 @@
 # Chia Plot Manager (GUI)
-This is a Multiplatform (Windows, Linux, MacOS) Chia Plot Manager with GUI, compatible with the [https://github.com/madMAx43v3r/chia-plotter](Madmax Chia Plotter)
+This is a Multiplatform (Windows, Linux, MacOS) Chia Plot Manager with GUI, compatible with the [Madmax Chia Plotter](https://github.com/madMAx43v3r/chia-plotter)
 
 🚀 Why not use this?
 
