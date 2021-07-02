@@ -1,38 +1,30 @@
 import { spawn } from 'child_process';
 import { BrowserWindow } from 'electron';
 
-import { PlotSettingsStore } from '@/types/Store';
+import { Worker } from '@/types/Store';
 import { Plot } from '@/types/Plot';
 
 export function generatePlot(
-  plotArgs: PlotSettingsStore,
+  plotArgs: Worker,
+  madmaxBinPath: string,
   win: BrowserWindow
 ): void {
-  const plot = spawn(plotArgs.madmaxBinPath, [
+  const plot = spawn(madmaxBinPath, [
     '-r',
     String(plotArgs.cpuThreads),
     '-t',
     `${plotArgs.tempDir}/`,
+    '-2',
+    `${plotArgs.tempDir2 ? plotArgs.tempDir2 : plotArgs.tempDir}/`,
     '-d',
     `${plotArgs.finalDir}/`,
     '-p',
     plotArgs.poolPublicKey,
     '-f',
     plotArgs.farmerPublicKey,
+    '-u',
+    String(plotArgs.buckets),
   ]);
-
-  // {
-  //   env: {
-  //     FARMER_KEY: plotArgs.farmerPublicKey,
-  //     POOL_KEY: plotArgs.poolPublicKey,
-  //     CPU_THREADS: String(plotArgs.cpuThreads),
-  //     OUTPUT_DIR: plotArgs.finalDir,
-  //     TEMP_DIR: plotArgs.tempDir,
-  //     MADMAX_PATH: plotArgs.madmaxBinPath,
-  //   },
-  // }
-
-  // win.webContents.send('new-plot', plot.pid);
 
   plot.on('error', (error) => {
     console.error(error);
@@ -44,6 +36,7 @@ export function generatePlot(
     if (dataString.includes('Multi-threaded pipelined Chia k32 plotter')) {
       const plotData: Plot = {
         pid: plot.pid || -1,
+        worker: plotArgs.name,
         startTime: new Date(),
         tempDir: plotArgs.tempDir,
         finalDir: plotArgs.finalDir,
@@ -62,12 +55,21 @@ export function generatePlot(
     if (dataString.includes('[P3')) {
       win.webContents.send('set-phase', plot.pid, 3);
     }
+    if (dataString.includes('[P4]')) {
+      win.webContents.send('set-phase', plot.pid, 4);
+    }
+    if (dataString.includes('copy to')) {
+      win.webContents.send('set-phase', plot.pid, 5);
+    }
+    if (dataString.includes('finished, took')) {
+      win.webContents.send('plot-finished', plot.pid);
+    }
 
     win.webContents.send('console-message', plot.pid, dataString);
   });
 
   plot.on('exit', (code) => {
     console.log('exited with code', code);
-    win.webContents.send('plot-finished', plot.pid);
+    win.webContents.send('plot-exit', plot.pid);
   });
 }

@@ -1,17 +1,8 @@
-import { PlotSettingsStore } from '@/types/Store';
+import { Worker } from '@/types/Store';
 
 const electron = require('electron');
 const ipc = electron.ipcRenderer;
 
 export function openLinkInBrowser(link: string): void {
   ipc.send('open-link', link);
-}
-
-export function createPlot(args: PlotSettingsStore): void {
-  console.log(args);
-  ipc.send('create-plot', JSON.stringify(args));
-}
-
-export function stopPlot(pid: string): void {
-  ipc.send('stop-plot', pid);
 }

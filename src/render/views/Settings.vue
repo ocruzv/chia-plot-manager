@@ -4,44 +4,85 @@
       <h1>Plotting Settings</h1>
     </header>
     <main class="flex flex-col px-8 py-12 space-y-4">
-      <div class="flex space-x-4 items-center justify-start pb-4">
+      <div
+        v-if="state.madmaxBinPath"
+        class="flex space-x-4 items-center justify-start pb-4"
+      >
         <router-link to="/">Go back</router-link>
       </div>
-      <Input v-model="state.poolPublicKey" label="Pool Public Key" />
-      <Input v-model="state.farmerPublicKey" label="Farmer Public Key" />
-      <Input
-        v-model.number="state.cpuThreads"
-        type="number"
-        min="1"
-        label="CPU Threads to use (per plot)"
-      />
-      <Input
-        :model-value="state.tempDir"
-        label="Temporary directory, needs ~220 GiB (per plot)"
-        readonly
-        @click="chooseDir('tempDir')"
-      />
-      <Input
-        :model-value="state.finalDir"
-        label="Final directory, needs ~100 GiB (per plot)"
-        readonly
-        @click="chooseDir('finalDir')"
-      />
       <Input
         :model-value="state.madmaxBinPath"
         label="Madmax Plotter Path (chia_plot file)"
         readonly
-        @click="chooseFile('finalDir')"
+        @click="chooseMadmaxPath"
       />
-      <a
-        a="#"
-        @click="
-          openLinkInBrowser(
-            'https://github.com/madMAx43v3r/chia-plotter#install'
-          )
-        "
-        >How to install Madmax Plotter?</a
-      >
+
+      <template v-if="state.madmaxBinPath">
+        <h2>Workers</h2>
+        <div
+          v-for="(worker, index) in state.workers"
+          :key="worker.name"
+          class="ml-10"
+        >
+          <Input v-model="worker.name" label="Worker Name" />
+          <Input v-model="worker.poolPublicKey" label="Pool Public Key" />
+          <Input v-model="worker.farmerPublicKey" label="Farmer Public Key" />
+          <Input
+            v-model.number="worker.cpuThreads"
+            type="number"
+            min="1"
+            label="CPU Threads to use (per plot)"
+          />
+          <Input
+            v-model.number="worker.buckets"
+            type="number"
+            min="1"
+            label="Number of buckets (default = 256)"
+          />
+          <Input
+            v-model.number="worker.parallelJobs"
+            type="number"
+            min="1"
+            label="Plots to create in parallel by this worker"
+          />
+          <Input
+            :model-value="worker.tempDir"
+            label="Temporary directory, needs ~220 GiB (per plot)"
+            readonly
+            @click="chooseDir('tempDir', index)"
+          />
+          <Input
+            :model-value="worker.tempDir2"
+            label="Temporary directory 2 (Optional)"
+            readonly
+            @click="chooseDir('tempDir2', index)"
+          />
+          <Input
+            :model-value="worker.finalDir"
+            label="Final directory, needs ~100 GiB (per plot)"
+            readonly
+            @click="chooseDir('finalDir', index)"
+          />
+
+          <Button color="red" class="mt-4" @click="removeWorker(index)"
+            >Remove Worker</Button
+          >
+
+          <hr class="mt-4" />
+        </div>
+
+        <Button @click="addWorker"> Add Worker </Button>
+
+        <a
+          a="#"
+          @click="
+            openLinkInBrowser(
+              'https://github.com/madMAx43v3r/chia-plotter#install'
+            )
+          "
+          >How to install Madmax Plotter?</a
+        >
+      </template>
     </main>
   </div>
 </template>
@@ -55,33 +96,40 @@
   import { PlotSettingsStore } from '@/types/Store';
 
   import { openLinkInBrowser } from '@/helpers/common';
+  import { defaultState, newWorker } from '@/helpers/state';
 
   import Input from '@/components/Input.vue';
+  import Button from '@/components/Button.vue';
 
   export default defineComponent({
     name: 'Settings',
     components: {
       Input,
+      Button,
     },
     setup() {
-      const state = useLocalStorage<PlotSettingsStore>('state', {
-        poolPublicKey: '',
-        farmerPublicKey: '',
-        cpuThreads: 4,
-        tempDir: '',
-        finalDir: '',
-        madmaxBinPath: '',
-      });
+      const state = useLocalStorage<PlotSettingsStore>('state', defaultState);
 
-      async function chooseDir(type: 'tempDir' | 'finalDir') {
+      function addWorker() {
+        state.value.workers.push(newWorker());
+      }
+
+      function removeWorker(index: number) {
+        state.value.workers.splice(index, 1);
+      }
+
+      async function chooseDir(
+        type: 'tempDir' | 'finalDir' | 'tempDir2',
+        workerIndex = 0
+      ) {
         const dirs = await ipc.invoke('select-dirs');
 
         if (dirs.length) {
-          state.value[type] = dirs[0];
+          state.value.workers[workerIndex][type] = dirs[0];
         }
       }
 
-      async function chooseFile() {
+      async function chooseMadmaxPath() {
         const dirs = await ipc.invoke('select-file');
 
         if (dirs.length) {
@@ -91,8 +139,10 @@
 
       return {
         state,
+        addWorker,
+        removeWorker,
         chooseDir,
-        chooseFile,
+        chooseMadmaxPath,
         openLinkInBrowser,
       };
     },

@@ -3,9 +3,20 @@ This is a Multiplatform (Windows, Linux, MacOS) Chia Plot Manager with GUI, comp
 
 🚀 Why not use this?
 
-![Chia Plot Manager Screenshot 1](https://user-images.githubusercontent.com/3529184/124125071-d3224c80-da3e-11eb-9fee-888b704acf55.png)
+![Chia Plot Manager Screenshot 1](https://user-images.githubusercontent.com/3529184/124296240-574c0100-db1f-11eb-9fb1-6b3bf88c80ed.png)
 
-![Chia Plot Manager Screenshot 2](https://user-images.githubusercontent.com/3529184/124125101-dae1f100-da3e-11eb-88ce-9de624abf3c6.png)
+![Chia Plot Manager Screenshot 2](https://user-images.githubusercontent.com/3529184/124296286-66cb4a00-db1f-11eb-8270-397b5450fc23.png)
+
+## Features
+
+- Support for parallel plotting
+- Support for multiple workers with independent configuration, so you can plot with different drives and different configuration on each of them
+- It works with Madmax Plotter! Much faster than the official plotter
+- It will start a new plot immediatelly after a plot is finished, so it's unattended plotting
+
+## Donations
+
+Chia, of course: `xch187wm2nt4y7upp2jtr9zcprevcrw7cnnh5wllug8rfh9ge8h3mx2qshc9xx`
 
 ## Development
 

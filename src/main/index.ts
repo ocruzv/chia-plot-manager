@@ -69,9 +69,9 @@ ipcMain.on('open-link', async (_, link) => {
   shell.openExternal(link);
 });
 
-ipcMain.on('create-plot', async (_, args) => {
+ipcMain.on('create-plot', async (_, args, madmaxBinPath) => {
   if (win) {
-    generatePlot(JSON.parse(args), win);
+    generatePlot(JSON.parse(args), madmaxBinPath, win);
   }
 });
 

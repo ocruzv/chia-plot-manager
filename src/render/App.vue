@@ -12,12 +12,16 @@
   const ipc = electron.ipcRenderer;
 
   import { useMainStore } from '@/stores/main';
+  import useConfig from '@/use/useConfig';
+  import usePlots from '@/use/usePlots';
 
   export default defineComponent({
     name: 'App',
     setup() {
       const router = useRouter();
       const store = useMainStore();
+      const { getWorkerConfig } = useConfig();
+      const { getWorkerJobs, createPlot } = usePlots();
 
       onMounted(() => {
         ipc.on('new-plot', (_, pid, plotData) => {
@@ -29,7 +33,21 @@
         ipc.on('console-message', (_, pid, data) => {
           store.addHistoryToPlot(pid, data);
         });
-        ipc.on('plot-finished', (_, pid) => {
+        ipc.on('plot-finished', (_, pid: string) => {
+          const plotData = { ...store.plots[pid] };
+          store.removePlot(pid);
+
+          const workerConfig = getWorkerConfig(plotData.worker);
+
+          if (
+            workerConfig &&
+            (workerConfig?.parallelJobs || 0) <
+              getWorkerJobs(plotData.worker).length
+          ) {
+            createPlot(workerConfig);
+          }
+        });
+        ipc.on('plot-exit', (_, pid) => {
           store.removePlot(pid);
         });
       });

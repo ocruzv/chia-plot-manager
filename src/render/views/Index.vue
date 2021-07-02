@@ -8,6 +8,7 @@
         <table v-if="plots.length" class="w-full text-center">
           <thead>
             <tr>
+              <th>Worker</th>
               <th>PID</th>
               <th>Start</th>
               <th>Elapsed Time</th>
@@ -18,21 +19,44 @@
           </thead>
           <tbody>
             <tr v-for="plot in plots" :key="plot.pid">
-              <td>{{ plot.pid }}</td>
+              <td>
+                {{ plot.worker }}
+              </td>
+              <td>
+                {{ plot.pid }}
+              </td>
               <td>{{ format(new Date(plot.startTime), 'Pp') }}</td>
               <td>{{ formatDistanceToNow(new Date(plot.startTime)) }}</td>
-              <td>{{ plot.phase }}/4</td>
+              <td class="flex flex-row">
+                <template v-if="plot.phase < 5"> {{ plot.phase }}/4 </template>
+                <template v-else-if="plot.phase === 5">
+                  Copying to final path
+                </template>
+                <div
+                  class="
+                    animate-spin
+                    rounded-full
+                    h-4
+                    w-4
+                    border-b-2 border-white
+                    ml-2
+                  "
+                ></div>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div class="flex flex-row space-x-4">
-        <Button @click="addPlot">
-          <template v-if="plots.length">
-            Create another plot in parallel
-          </template>
-          <template v-else> Start plotting </template>
+        <Button
+          v-if="!plots.length && state.workers.length"
+          @click="startPlotting"
+        >
+          Start plotting
+        </Button>
+        <Button v-if="!state.workers.length" @click="goToSettings">
+          Configure your workers
         </Button>
         <Button v-if="plots.length" color="red" @click="stopPlotting"
           >Stop plotting</Button
@@ -48,16 +72,20 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, unref, computed } from 'vue';
+  import { defineComponent, unref, computed, onMounted } from 'vue';
+  import { useRouter } from 'vue-router';
   import { useLocalStorage } from '@vueuse/core';
   import format from 'date-fns/format';
   import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
   import Button from '@/components/Button.vue';
-  import { createPlot, stopPlot } from '@/helpers/common';
+
+  import { defaultState } from '@/helpers/state';
   import { PlotSettingsStore } from '@/types/Store';
 
   import { useMainStore } from '@/stores/main';
+
+  import usePlots from '@/use/usePlots';
 
   export default defineComponent({
     name: 'Index',
@@ -66,18 +94,17 @@
     },
     setup() {
       const store = useMainStore();
+      const router = useRouter();
+      const { createPlot, stopPlot } = usePlots();
 
-      const state = useLocalStorage<PlotSettingsStore>('state', {
-        poolPublicKey: '',
-        farmerPublicKey: '',
-        cpuThreads: 4,
-        tempDir: '',
-        finalDir: '',
-        madmaxBinPath: '',
-      });
+      const state = useLocalStorage<PlotSettingsStore>('state', defaultState);
 
-      function addPlot() {
-        createPlot(unref(state));
+      function startPlotting() {
+        unref(state).workers.forEach((worker) => {
+          for (let i = 0; i < (worker.parallelJobs || 1); i += 1) {
+            createPlot(worker);
+          }
+        });
       }
 
       function stopPlotting() {
@@ -86,12 +113,26 @@
         });
       }
 
+      function goToSettings() {
+        router.push('/settings');
+      }
+
+      onMounted(() => {
+        if (!state.value.madmaxBinPath) {
+          window.alert('Please configure first your workers');
+
+          goToSettings();
+        }
+      });
+
       return {
-        addPlot,
+        startPlotting,
         stopPlotting,
         plots: computed(() => Object.values(store.plots)),
         format,
         formatDistanceToNow,
+        state,
+        goToSettings,
       };
     },
   });
