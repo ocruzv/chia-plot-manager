@@ -1,8 +1,11 @@
 {
   "name": "ocruzv-chia-plot-manager",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "dist/main/build.js",
-  "author": "Omar Cruz",
+  "author": {
+    "name": "Omar Cruz",
+    "email": "41c7pgy9l@relay.firefox.com"
+  },
   "license": "MIT",
   "scripts": {
     "dev": "npm run dev:all",
@@ -16,6 +19,7 @@
   },
   "build": {
     "appId": "com.ocruzv.plot-manager",
+    "productName": "Ocruzv Chia Plot Manager",
     "electronDownload": {
       "mirror": "https://npm.taobao.org/mirrors/electron/"
     },
@@ -39,6 +43,10 @@
           ]
         }
       ],
+      "artifactName": "${productName}_setup_${version}.${ext}"
+    },
+    "linux": {
+      "target": ["deb", "AppImage"],
       "artifactName": "${productName}_setup_${version}.${ext}"
     },
     "nsis": {
