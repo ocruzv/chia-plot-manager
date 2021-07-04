@@ -6,7 +6,7 @@
     <main class="flex flex-col px-8 py-12 space-y-4">
       <router-link to="/">Go back</router-link>
 
-      <p>Version 0.2</p>
+      <p>Version 0.2.2</p>
       <p>Developed by Omar Cruz (ocruzv)</p>
 
       <p>
