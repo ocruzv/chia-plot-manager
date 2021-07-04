@@ -24,7 +24,15 @@ const config: UserConfig = {
   server: {
     port: +process.env.PORT,
   },
-  plugins: [vue()],
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag === 'box-icon',
+        },
+      },
+    }),
+  ],
   optimizeDeps: {
     exclude: ['electron-is-dev', 'electron-store'],
   },

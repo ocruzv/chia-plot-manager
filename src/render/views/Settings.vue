@@ -22,10 +22,13 @@
         <div
           v-for="(worker, index) in state.workers"
           :key="worker.name"
-          class="ml-10"
+          class="ml-10 flex flex-col space-y-2"
         >
           <Input v-model="worker.name" label="Worker Name" />
-          <Input v-model="worker.poolPublicKey" label="Pool Public Key" />
+          <Input
+            v-model="worker.poolPublicKey"
+            label="Pool Public Key or Pool Contract Adress"
+          />
           <Input v-model="worker.farmerPublicKey" label="Farmer Public Key" />
           <Input
             v-model.number="worker.cpuThreads"

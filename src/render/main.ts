@@ -6,6 +6,8 @@ import router from '@/router';
 import '@/assets/css/tailwind.css';
 import '@/assets/css/main.css';
 
+import 'boxicons';
+
 const app = createApp(App);
 
 app.use(router);

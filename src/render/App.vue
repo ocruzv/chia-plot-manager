@@ -41,7 +41,7 @@
 
           if (
             workerConfig &&
-            (workerConfig?.parallelJobs || 0) <
+            (workerConfig?.parallelJobs || 0) >
               getWorkerJobs(plotData.worker).length
           ) {
             createPlot(workerConfig);

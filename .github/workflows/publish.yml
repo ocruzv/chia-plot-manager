@@ -1,0 +1,25 @@
+name: Publish release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use node 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+      - name: 'Install Dependencies'
+        run: npm ci
+      - name: 'Build and publish'
+        run: npm run build:publish

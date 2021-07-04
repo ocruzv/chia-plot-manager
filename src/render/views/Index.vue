@@ -15,6 +15,7 @@
               <th>Phase</th>
               <!-- <th>Progress</th> -->
               <!-- <th>Temp Size</th> -->
+              <th>Logs</th>
             </tr>
           </thead>
           <tbody>
@@ -43,10 +44,25 @@
                   "
                 ></div>
               </td>
+              <td width="16">
+                <box-icon
+                  name="message-square-detail"
+                  color="white"
+                  class="cursor-pointer"
+                  @click="openConsole(plot.pid)"
+                ></box-icon>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
+
+      <Console
+        v-if="selectedPlotHistory.length"
+        class="mb-4"
+        :log-history="selectedPlotHistory"
+        @close="selectedPid = null"
+      />
 
       <div class="flex flex-row space-x-4">
         <Button
@@ -72,13 +88,22 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, unref, computed, onMounted } from 'vue';
+  import {
+    defineComponent,
+    unref,
+    computed,
+    onMounted,
+    ref,
+    Ref,
+    ComputedRef,
+  } from 'vue';
   import { useRouter } from 'vue-router';
   import { useLocalStorage } from '@vueuse/core';
   import format from 'date-fns/format';
   import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
   import Button from '@/components/Button.vue';
+  import Console from '@/components/Console.vue';
 
   import { defaultState } from '@/helpers/state';
   import { PlotSettingsStore } from '@/types/Store';
@@ -91,11 +116,14 @@
     name: 'Index',
     components: {
       Button,
+      Console,
     },
     setup() {
       const store = useMainStore();
       const router = useRouter();
       const { createPlot, stopPlot } = usePlots();
+
+      const selectedPid: Ref<string | null> = ref(null);
 
       const state = useLocalStorage<PlotSettingsStore>('state', defaultState);
 
@@ -111,11 +139,23 @@
         Object.keys(store.plots).forEach((plotPid) => {
           stopPlot(plotPid);
         });
+
+        selectedPid.value = null;
       }
 
       function goToSettings() {
         router.push('/settings');
       }
+
+      function openConsole(pid: string) {
+        selectedPid.value = pid;
+      }
+
+      const selectedPlotHistory: ComputedRef<string[]> = computed(() => {
+        if (!selectedPid.value || !store.plots[selectedPid.value]) return [];
+
+        return store.plots[selectedPid.value].consoleHistory;
+      });
 
       onMounted(() => {
         if (!state.value.madmaxBinPath) {
@@ -133,6 +173,9 @@
         formatDistanceToNow,
         state,
         goToSettings,
+        openConsole,
+        selectedPlotHistory,
+        selectedPid,
       };
     },
   });

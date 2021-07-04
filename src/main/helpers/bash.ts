@@ -18,7 +18,7 @@ export function generatePlot(
     `${plotArgs.tempDir2 ? plotArgs.tempDir2 : plotArgs.tempDir}/`,
     '-d',
     `${plotArgs.finalDir}/`,
-    '-p',
+    `${plotArgs.poolPublicKey.startsWith('xch') ? '-c' : '-p'}`,
     plotArgs.poolPublicKey,
     '-f',
     plotArgs.farmerPublicKey,
@@ -31,7 +31,6 @@ export function generatePlot(
   });
 
   plot.stdout.on('data', (data) => {
-    console.log('data', data.toString());
     const dataString = data.toString();
     if (dataString.includes('Multi-threaded pipelined Chia k32 plotter')) {
       const plotData: Plot = {
@@ -61,11 +60,11 @@ export function generatePlot(
     if (dataString.includes('copy to')) {
       win.webContents.send('set-phase', plot.pid, 5);
     }
+
+    win.webContents.send('console-message', plot.pid, dataString);
     if (dataString.includes('finished, took')) {
       win.webContents.send('plot-finished', plot.pid);
     }
-
-    win.webContents.send('console-message', plot.pid, dataString);
   });
 
   plot.on('exit', (code) => {
