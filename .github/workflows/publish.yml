@@ -7,7 +7,11 @@ on:
 
 jobs:
   build_and_deploy:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v2
       - name: Use node 14.x
@@ -20,7 +24,7 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
       - name: 'Install Dependencies'
-        run: npm i
+        run: npm ci
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         with:

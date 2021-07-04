@@ -15,7 +15,7 @@
     "dev:ele": "node script/build --env=development --watch",
     "build:vue": "vite build",
     "build:ele": "node script/build --env=production",
-    "build": "npm run build:vue && npm run build:ele && electron-builder --linux --windows --macos",
+    "build": "npm run build:vue && npm run build:ele && electron-builder",
     "build:publish": "npm run build:vue && npm run build:ele && electron-builder --linux --windows --macos --publish=onTagOrDraft",
     "lint:script": "eslint --ext .ts,vue --ignore-path .gitignore ."
   },
