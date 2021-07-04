@@ -2,6 +2,7 @@
   "name": "ocruzv-chia-plot-manager",
   "version": "0.2.0",
   "main": "dist/main/build.js",
+  "description": "Chia Plot Manager compatible with MadMax Plotter",
   "author": {
     "name": "Omar Cruz",
     "email": "41c7pgy9l@relay.firefox.com"
