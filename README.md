@@ -3,9 +3,9 @@ This is a Multiplatform (Windows, Linux, MacOS) Chia Plot Manager with GUI, comp
 
 🚀 Why not use this?
 
-![Chia Plot Manager Screenshot 1](https://user-images.githubusercontent.com/3529184/124296240-574c0100-db1f-11eb-9fb1-6b3bf88c80ed.png)
+![Chia Plot Manager Screenshot 1](https://user-images.githubusercontent.com/3529184/124389174-9d35d000-dcab-11eb-8c61-c6bf053f6e44.png)
 
-![Chia Plot Manager Screenshot 2](https://user-images.githubusercontent.com/3529184/124296286-66cb4a00-db1f-11eb-8270-397b5450fc23.png)
+![Chia Plot Manager Screenshot 2](https://user-images.githubusercontent.com/3529184/124389208-c5bdca00-dcab-11eb-8982-bfff8c0d60e3.png)
 
 ## Downloads
 
