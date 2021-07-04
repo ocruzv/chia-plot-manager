@@ -9,9 +9,9 @@ This is a Multiplatform (Windows, Linux, MacOS) Chia Plot Manager with GUI, comp
 
 ## Downloads
 
-- Windows [EXE](https://github.com/ocruzv/chia-plot-manager/releases/latest/download/Ocruzv.Chia.Plot.Manager.exe)
-- Linux [DEB](https://github.com/ocruzv/chia-plot-manager/releases/latest/download/Ocruzv.Chia.Plot.Manager.deb) | [AppImage](https://github.com/ocruzv/chia-plot-manager/releases/latest/download/Ocruzv.Chia.Plot.Manager.AppImage)
-- MacOS [DMG](https://github.com/ocruzv/chia-plot-manager/releases/latest/download/Ocruzv.Chia.Plot.Manager.dmg)
+- Windows [EXE](https://github.com/ocruzv/chia-plot-manager/releases/latest/download/Ocruzv-Chia-Plot-Manager.exe)
+- Linux [DEB](https://github.com/ocruzv/chia-plot-manager/releases/latest/download/Ocruzv-Chia-Plot-Manager.deb) | [AppImage](https://github.com/ocruzv/chia-plot-manager/releases/latest/download/Ocruzv-Chia-Plot-Manager.AppImage)
+- MacOS [DMG](https://github.com/ocruzv/chia-plot-manager/releases/latest/download/Ocruzv-Chia-Plot-Manager.dmg)
 
 ## Features
 
