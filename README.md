@@ -1,5 +1,5 @@
 # Chia Plot Manager (GUI)
-This is a Multiplatform (Windows, Linux, MacOS) Chia Plot Manager with GUI, compatible with the [Madmax Chia Plotter](https://github.com/madMAx43v3r/chia-plotter)
+This is a Multiplatform (Windows, Linux, MacOS) Chia Plot Manager with GUI, compatible with the [Madmax Chia Plotter](https://github.com/madMAx43v3r/chia-plotter) and the Chia Pool Protocol.
 
 🚀 Why not use this?
 
@@ -19,6 +19,7 @@ This is a Multiplatform (Windows, Linux, MacOS) Chia Plot Manager with GUI, comp
 - Support for multiple workers with independent configuration, so you can plot with different drives and different configuration on each of them
 - It works with Madmax Plotter! Much faster than the official plotter
 - It will start a new plot immediatelly after a plot is finished, so it's unattended plotting
+- It does support the new pool protocol! (If you're using the latest madMax version!!!)
 
 ## How to use
 
@@ -30,6 +31,12 @@ This is a Multiplatform (Windows, Linux, MacOS) Chia Plot Manager with GUI, comp
 ## Donations
 
 Chia, of course: `xch187wm2nt4y7upp2jtr9zcprevcrw7cnnh5wllug8rfh9ge8h3mx2qshc9xx`
+
+BTC: `15VJPYrZWPQXZvdWzpc8vKYV42QmzS6x6G`
+
+ETH: `0xEb223E52E91BCA097E3D62834F487131858A5c93`
+
+DOGE: `DCaAXbnnvSCeu2uTTTq2vdXtwcBwtiT5Q4`
 
 ## Development
 
