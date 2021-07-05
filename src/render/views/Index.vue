@@ -13,7 +13,7 @@
               <th>Start</th>
               <th>Elapsed Time</th>
               <th>Phase</th>
-              <!-- <th>Progress</th> -->
+              <th>Progress</th>
               <!-- <th>Temp Size</th> -->
               <th>Logs</th>
             </tr>
@@ -44,6 +44,7 @@
                   "
                 ></div>
               </td>
+              <td>{{ getPlotProgress(plot) }}%</td>
               <td width="16">
                 <box-icon
                   name="message-square-detail"
@@ -116,6 +117,7 @@
 
   import { defaultState } from '@/helpers/state';
   import { PlotSettingsStore } from '@/types/Store';
+  import { Plot } from '@/types/Plot';
 
   import { useMainStore } from '@/stores/main';
 
@@ -137,6 +139,7 @@
       const state = useLocalStorage<PlotSettingsStore>('state', defaultState);
 
       function startPlotting() {
+        selectedPid.value = null;
         unref(state).workers.forEach((worker) => {
           for (let i = 0; i < (worker.parallelJobs || 1); i += 1) {
             createPlot(worker);
@@ -158,6 +161,12 @@
 
       function openConsole(pid: string) {
         selectedPid.value = pid;
+      }
+
+      function getPlotProgress(plot: Plot) {
+        const completedPlotLogsCount = 57;
+
+        return ~~((plot.consoleHistory.length / completedPlotLogsCount) * 100);
       }
 
       const selectedPlotHistory: ComputedRef<string[]> = computed(() => {
@@ -187,6 +196,7 @@
         selectedPlotHistory,
         selectedPid,
         toggleStopAfterQueue: store.toggleStopAfterQueue,
+        getPlotProgress,
       };
     },
   });

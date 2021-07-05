@@ -40,8 +40,8 @@ DOGE: `DCaAXbnnvSCeu2uTTTq2vdXtwcBwtiT5Q4`
 ## Roadmap
 
 - Support for official plotter
-- Progress indicator
-- Space used indicator
+- Configurable delay to start parallel plotting
+- Space Left/Space used indicator
 - Suggest more! Open an issue here in Github :)
 
 ## Development
