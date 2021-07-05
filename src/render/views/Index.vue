@@ -64,7 +64,16 @@
         @close="selectedPid = null"
       />
 
-      <div class="flex flex-row space-x-4">
+      <div class="flex flex-col space-x-4">
+        <label v-if="plots.length" class="mb-4 flex items-center">
+          <input
+            :value="stopAfterQueue"
+            type="checkbox"
+            class="mr-2"
+            @change="toggleStopAfterQueue"
+          />
+          Stop plotting after the current queue
+        </label>
         <Button
           v-if="!plots.length && state.workers.length"
           @click="startPlotting"
@@ -169,6 +178,7 @@
         startPlotting,
         stopPlotting,
         plots: computed(() => Object.values(store.plots)),
+        stopAfterQueue: computed(() => store.stopAfterQueue),
         format,
         formatDistanceToNow,
         state,
@@ -176,6 +186,7 @@
         openConsole,
         selectedPlotHistory,
         selectedPid,
+        toggleStopAfterQueue: store.toggleStopAfterQueue,
       };
     },
   });

@@ -17,5 +17,6 @@ export function newWorker(): Worker {
 
 export const defaultState: PlotSettingsStore = {
   madmaxBinPath: '',
+  stopAfterQueue: false,
   workers: [newWorker()],
 };

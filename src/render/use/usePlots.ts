@@ -16,7 +16,12 @@ export default function usePlots() {
   }
 
   function createPlot(workerData: Worker): void {
-    ipc.send('create-plot', JSON.stringify(workerData), unref(madmaxBinPath));
+    if (
+      !store.stopAfterQueue &&
+      (workerData.parallelJobs || 1) > getWorkerJobs(workerData.name).length
+    ) {
+      ipc.send('create-plot', JSON.stringify(workerData), unref(madmaxBinPath));
+    }
   }
 
   function stopPlot(pid: string): void {

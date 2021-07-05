@@ -1,6 +1,6 @@
 {
   "name": "ocruzv-chia-plot-manager",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "dist/main/build.js",
   "description": "Chia Plot Manager compatible with MadMax Plotter",
   "author": {

@@ -21,7 +21,7 @@
       const router = useRouter();
       const store = useMainStore();
       const { getWorkerConfig } = useConfig();
-      const { getWorkerJobs, createPlot } = usePlots();
+      const { createPlot } = usePlots();
 
       onMounted(() => {
         ipc.on('new-plot', (_, pid, plotData) => {
@@ -39,16 +39,20 @@
 
           const workerConfig = getWorkerConfig(plotData.worker);
 
-          if (
-            workerConfig &&
-            (workerConfig?.parallelJobs || 0) >
-              getWorkerJobs(plotData.worker).length
-          ) {
+          if (workerConfig) {
             createPlot(workerConfig);
+          }
+
+          if (!Object.keys(store.plots).length) {
+            store.stopAfterQueue = false;
           }
         });
         ipc.on('plot-exit', (_, pid) => {
           store.removePlot(pid);
+
+          if (!Object.keys(store.plots).length) {
+            store.stopAfterQueue = false;
+          }
         });
       });
 

@@ -1,4 +1,4 @@
-import { computed } from 'vue';
+import { computed, unref } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
 
 import { PlotSettingsStore } from '@/types/Store';
@@ -18,5 +18,6 @@ export default function useConfig() {
   return {
     getWorkerConfig,
     madmaxBinPath,
+    state: computed(() => unref(state)),
   };
 }

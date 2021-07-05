@@ -11,5 +11,6 @@ export interface Worker {
 }
 export interface PlotSettingsStore {
   madmaxBinPath: string;
+  stopAfterQueue: boolean;
   workers: Worker[];
 }

@@ -1,9 +1,9 @@
 # Chia Plot Manager (GUI)
-This is a Multiplatform (Windows, Linux, MacOS) Chia Plot Manager with GUI, compatible with the [Madmax Chia Plotter](https://github.com/madMAx43v3r/chia-plotter) and the Chia Pool Protocol.
+This is a Multiplatform (Windows, Linux, MacOS) [Chia](https://www.chia.net/) Plot Manager with GUI, compatible with the [Madmax Chia Plotter](https://github.com/madMAx43v3r/chia-plotter) and the Chia Pool Protocol. Inspired in [Swar's Chia Plot Manager](https://github.com/swar/Swar-Chia-Plot-Manager)
 
 🚀 Why not use this?
 
-![Chia Plot Manager Screenshot 1](https://user-images.githubusercontent.com/3529184/124389174-9d35d000-dcab-11eb-8c61-c6bf053f6e44.png)
+![Chia Plot Manager Screenshot 1](https://user-images.githubusercontent.com/3529184/124416370-78c60c00-dd1c-11eb-9308-2e1c850a4e3e.png)
 
 ![Chia Plot Manager Screenshot 2](https://user-images.githubusercontent.com/3529184/124389208-c5bdca00-dcab-11eb-8982-bfff8c0d60e3.png)
 
@@ -37,6 +37,12 @@ BTC: `15VJPYrZWPQXZvdWzpc8vKYV42QmzS6x6G`
 ETH: `0xEb223E52E91BCA097E3D62834F487131858A5c93`
 
 DOGE: `DCaAXbnnvSCeu2uTTTq2vdXtwcBwtiT5Q4`
+## Roadmap
+
+- Support for official plotter
+- Progress indicator
+- Space used indicator
+- Suggest more! Open an issue here in Github :)
 
 ## Development
 

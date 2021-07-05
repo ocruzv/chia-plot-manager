@@ -4,12 +4,10 @@ import { Plot } from '@/types/Plot';
 export const useMainStore = defineStore({
   id: 'main',
   state: () => ({
-    plots: {} as { [key: string]: Plot }[],
+    plots: {} as { [key: string]: Plot },
+    stopAfterQueue: false as boolean,
   }),
   actions: {
-    resetPlots() {
-      this.plots = [];
-    },
     addPlot(pid: string, plot: Plot) {
       this.plots[pid] = plot;
     },
@@ -21,6 +19,9 @@ export const useMainStore = defineStore({
     },
     removePlot(pid: string) {
       delete this.plots[pid];
+    },
+    toggleStopAfterQueue() {
+      this.stopAfterQueue = !this.stopAfterQueue;
     },
   },
 });
