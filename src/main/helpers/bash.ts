@@ -4,6 +4,12 @@ import { BrowserWindow } from 'electron';
 import { Worker } from '@/types/Store';
 import { Plot } from '@/types/Plot';
 
+import {
+  hasEnoughSpaceMain,
+  hasOldPlotsInDirMain,
+  removePlotInDirMain,
+} from './disk';
+
 export function generatePlot(
   plotArgs: Worker,
   madmaxBinPath: string,
@@ -30,7 +36,7 @@ export function generatePlot(
     console.error(error);
   });
 
-  plot.stdout.on('data', (data) => {
+  plot.stdout.on('data', async (data) => {
     const dataString = data.toString();
     if (dataString.includes('Multi-threaded pipelined Chia k32 plotter')) {
       const plotData: Plot = {
@@ -56,6 +62,17 @@ export function generatePlot(
     }
     if (dataString.includes('[P4]')) {
       win.webContents.send('set-phase', plot.pid, 4);
+    }
+    if (
+      dataString.includes('[P4] Starting') &&
+      plotArgs.poolPublicKey.startsWith('xch')
+    ) {
+      const hasEnoughSpace = await hasEnoughSpaceMain(plotArgs.finalDir, 100);
+      const hasOldPlotsInDir = await hasOldPlotsInDirMain(plotArgs.finalDir);
+
+      if (!hasEnoughSpace && plotArgs.oldPlotsDir && hasOldPlotsInDir) {
+        await removePlotInDirMain(plotArgs.oldPlotsDir);
+      }
     }
     if (dataString.includes('copy to')) {
       win.webContents.send('set-phase', plot.pid, 5);

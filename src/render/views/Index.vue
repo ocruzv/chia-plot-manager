@@ -164,6 +164,8 @@
       }
 
       function getPlotProgress(plot: Plot) {
+        if (!plot) return 0;
+
         const completedPlotLogsCount = 57;
 
         return ~~((plot.consoleHistory.length / completedPlotLogsCount) * 100);

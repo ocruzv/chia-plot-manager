@@ -28,6 +28,7 @@
           <Input
             v-model="worker.poolPublicKey"
             label="Pool Public Key or Pool Contract Adress"
+            @blur="handlePoolPublicKeyBlur($event, index)"
           />
           <Input v-model="worker.farmerPublicKey" label="Farmer Public Key" />
           <Input
@@ -67,6 +68,24 @@
             @click="chooseDir('finalDir', index)"
           />
 
+          <div v-if="worker.poolPublicKey.startsWith('xch')">
+            <Input
+              :model-value="worker.oldPlotsDir"
+              label="If you want to replace your old (static) plots with new (portable) plots gradually, please choose your old plots path (It should be different than the final directory)"
+              readonly
+              @click="chooseDir('oldPlotsDir', index)"
+            />
+            <a
+              href="#"
+              @click="
+                openLinkInBrowser(
+                  'https://github.com/ocruzv/chia-plot-manager#how-replot-works'
+                )
+              "
+              >Read more</a
+            >
+          </div>
+
           <Button color="red" class="mt-4" @click="removeWorker(index)"
             >Remove Worker</Button
           >
@@ -77,7 +96,7 @@
         <Button @click="addWorker"> Add Worker </Button>
 
         <a
-          a="#"
+          href="#"
           @click="
             openLinkInBrowser(
               'https://github.com/madMAx43v3r/chia-plotter#install'
@@ -122,12 +141,17 @@
       }
 
       async function chooseDir(
-        type: 'tempDir' | 'finalDir' | 'tempDir2',
+        type: 'tempDir' | 'finalDir' | 'tempDir2' | 'oldPlotsDir',
         workerIndex = 0
       ) {
         const dirs = await ipc.invoke('select-dirs');
 
         if (dirs.length) {
+          if (
+            type === 'oldPlotsDir' &&
+            dirs[0] === state.value.workers[workerIndex].finalDir
+          )
+            return;
           state.value.workers[workerIndex][type] = dirs[0];
         }
       }
@@ -140,6 +164,12 @@
         }
       }
 
+      function handlePoolPublicKeyBlur(_: FocusEvent, index: number) {
+        if (!state.value.workers[index].poolPublicKey.startsWith('xch')) {
+          state.value.workers[index].oldPlotsDir = '';
+        }
+      }
+
       return {
         state,
         addWorker,
@@ -147,6 +177,7 @@
         chooseDir,
         chooseMadmaxPath,
         openLinkInBrowser,
+        handlePoolPublicKeyBlur,
       };
     },
   });
