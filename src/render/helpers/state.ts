@@ -12,6 +12,7 @@ export function newWorker(): Worker {
     name: generateName(),
     buckets: 256,
     parallelJobs: 1,
+    oldPlotsDir: '',
   };
 }
 

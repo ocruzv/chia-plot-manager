@@ -8,6 +8,7 @@ export interface Worker {
   tempDir2?: string;
   finalDir: string;
   parallelJobs?: number;
+  oldPlotsDir?: string;
 }
 export interface PlotSettingsStore {
   madmaxBinPath: string;

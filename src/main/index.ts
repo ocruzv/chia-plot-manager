@@ -7,6 +7,7 @@ import is_dev from 'electron-is-dev';
 import dotenv from 'dotenv';
 
 import { generatePlot } from './helpers/bash';
+import { hasEnoughSpaceMain, hasOldPlotsInDirMain } from './helpers/disk';
 
 dotenv.config({ path: join(__dirname, '../../.env') });
 
@@ -64,6 +65,14 @@ ipcMain.handle('select-file', async () => {
     return result.filePaths;
   }
 });
+
+ipcMain.handle('has-enough-space', (_, drive, spaceNeeded) =>
+  hasEnoughSpaceMain(drive, spaceNeeded)
+);
+
+ipcMain.handle('has-old-plots-in-dir', (_, directory) =>
+  hasOldPlotsInDirMain(directory)
+);
 
 ipcMain.on('open-link', async (_, link) => {
   shell.openExternal(link);

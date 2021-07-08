@@ -39,6 +39,9 @@
 
           const workerConfig = getWorkerConfig(plotData.worker);
 
+          console.log('plotData', plotData);
+          console.log('workerConfig', workerConfig);
+
           if (workerConfig) {
             createPlot(workerConfig);
           }

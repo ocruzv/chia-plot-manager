@@ -19,7 +19,8 @@ This is a Multiplatform (Windows, Linux, MacOS) [Chia](https://www.chia.net/) Pl
 - Support for multiple workers with independent configuration, so you can plot with different drives and different configuration on each of them
 - It works with Madmax Plotter! Much faster than the official plotter
 - It will start a new plot immediatelly after a plot is finished, so it's unattended plotting
-- It does support the new pool protocol! (If you're using the latest madMax version!!!)
+- It does support the new pool protocol (Portable Plots)! (If you're using the latest madMax version!!!)
+- Replot old (static) plots. The plot manager will remove old plots gradually and automagically when you create portable (plot protocol) plots, this way you'll not worry on deleting them manually and maximize possible gains.
 
 ## How to use
 
@@ -27,6 +28,18 @@ This is a Multiplatform (Windows, Linux, MacOS) [Chia](https://www.chia.net/) Pl
 - Download and install my Chia Plot Manager
 - Run it, configure the path to the Madmax Chia Plotter and your workers
 - Start plotting!
+
+## How Replot works
+
+If your pool key starts with xch, that means you're pointing to a NFT address, so, you are creating portable plots with that worker.
+
+If that's the case, you'll be able to (optionally) choose a directory that should contain old (static) plots, and the plotter will handle that case to remove gradually your old plots to replace them with the new plot format.
+
+The remotion will occur in phase 4, so you'll maximize your chances to win with that plot until the last minutes.
+
+** You need to choose a _different_ directory for your new portable plots **
+
+![Replot Diagram](https://user-images.githubusercontent.com/3529184/124793064-3e728f80-df13-11eb-87c2-4c1a6d9739a2.png)
 
 ## Donations
 

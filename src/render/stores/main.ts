@@ -15,7 +15,9 @@ export const useMainStore = defineStore({
       this.plots[pid] = { ...this.plots[pid], ...plot };
     },
     addHistoryToPlot(pid: string, consoleLine: string) {
-      this.plots[pid].consoleHistory.push(consoleLine);
+      if (this.plots[pid]) {
+        this.plots[pid].consoleHistory.push(consoleLine);
+      }
     },
     removePlot(pid: string) {
       delete this.plots[pid];
