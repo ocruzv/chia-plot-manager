@@ -27,7 +27,7 @@
           <Input v-model="worker.name" label="Worker Name" />
           <Input
             v-model="worker.poolPublicKey"
-            label="Pool Public Key or Pool Contract Adress"
+            label="Pool Public Key or Pool Contract Address"
             @blur="handlePoolPublicKeyBlur($event, index)"
           />
           <Input v-model="worker.farmerPublicKey" label="Farmer Public Key" />

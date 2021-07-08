@@ -24,7 +24,7 @@ jobs:
           path: ~/.npm
           key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
       - name: 'Install Dependencies'
-        run: npm ci
+        run: npm i
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         with:
