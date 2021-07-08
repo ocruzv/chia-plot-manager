@@ -1,4 +1,4 @@
-import { readdir, rm } from 'fs';
+import { readdir, unlink } from 'fs';
 const diskspace = require('diskspace');
 
 export function diskStats(
@@ -19,12 +19,14 @@ export function hasEnoughSpaceMain(
   drive: string,
   GiBNeeded: number
 ): Promise<boolean> {
-  const spaceNeeded = GiBNeeded * 10000000;
+  const spaceNeeded = GiBNeeded * 1000000000;
   return new Promise((resolve, reject) => {
     diskspace.check(drive, function (err, result) {
       if (err) {
         reject(err);
       }
+
+      console.log(spaceNeeded, result);
 
       if (result.free > spaceNeeded) {
         resolve(true);
@@ -42,6 +44,8 @@ export function findPlotFileInDirMain(
     readdir(directory, { withFileTypes: true }, (err, files) => {
       if (err) reject(err);
 
+      console.log(files);
+
       return resolve(files.find((file) => file.name.includes('.plot'))?.name);
     });
   });
@@ -58,7 +62,8 @@ export async function hasOldPlotsInDirMain(
 export function removePlotInDirMain(directory: string): Promise<void> {
   return new Promise((resolve, reject) => {
     findPlotFileInDirMain(directory).then((file) => {
-      rm(`${directory}/${file}`, { force: true }, (err) => {
+      console.log(directory, file);
+      unlink(`${directory}/${file}`, (err) => {
         if (err) reject(err);
 
         resolve();

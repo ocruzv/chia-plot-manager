@@ -37,6 +37,8 @@ If that's the case, you'll be able to (optionally) choose a directory that shoul
 
 The remotion will occur in phase 4, so you'll maximize your chances to win with that plot until the last minutes.
 
+** You need to choose a _different_ directory for your new portable plots **
+
 ![Replot Diagram](https://user-images.githubusercontent.com/3529184/124793064-3e728f80-df13-11eb-87c2-4c1a6d9739a2.png)
 
 ## Donations

@@ -65,10 +65,11 @@ export function generatePlot(
     }
     if (
       dataString.includes('[P4] Starting') &&
-      plotArgs.poolPublicKey.startsWith('xch')
+      plotArgs.poolPublicKey.startsWith('xch') &&
+      plotArgs.oldPlotsDir
     ) {
       const hasEnoughSpace = await hasEnoughSpaceMain(plotArgs.finalDir, 100);
-      const hasOldPlotsInDir = await hasOldPlotsInDirMain(plotArgs.finalDir);
+      const hasOldPlotsInDir = await hasOldPlotsInDirMain(plotArgs.oldPlotsDir);
 
       if (!hasEnoughSpace && plotArgs.oldPlotsDir && hasOldPlotsInDir) {
         await removePlotInDirMain(plotArgs.oldPlotsDir);
