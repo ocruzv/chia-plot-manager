@@ -1,5 +1,5 @@
 import { readdir, unlink } from 'fs';
-const diskspace = require('diskspace');
+import * as diskspace from 'diskspace';
 
 export function diskStats(
   drive: string
