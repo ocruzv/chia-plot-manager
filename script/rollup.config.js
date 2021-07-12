@@ -1,9 +1,10 @@
-const path = require('path')
-const { nodeResolve } = require('@rollup/plugin-node-resolve')
-const commonjs = require('@rollup/plugin-commonjs')
-const esbuild = require('rollup-plugin-esbuild')
-const alias = require('@rollup/plugin-alias')
-const json = require('@rollup/plugin-json')
+const path = require('path');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
+const commonjs = require('@rollup/plugin-commonjs');
+const esbuild = require('rollup-plugin-esbuild');
+const alias = require('@rollup/plugin-alias');
+const json = require('@rollup/plugin-json');
+const copy = require('rollup-plugin-copy');
 
 module.exports = (env = 'production') => {
   return {
@@ -30,7 +31,7 @@ module.exports = (env = 'production') => {
         jsxFragment: 'React.Fragment',
         // Like @rollup/plugin-replace
         define: {
-          __VERSION__: '"x.y.z"'
+          __VERSION__: '"x.y.z"',
         },
         // Add extra loaders
         loaders: {
@@ -38,14 +39,22 @@ module.exports = (env = 'production') => {
           // require @rollup/plugin-commonjs
           '.json': 'json',
           // Enable JSX in .js files too
-          '.js': 'jsx'
+          '.js': 'jsx',
         },
+      }),
+      copy({
+        targets: [
+          {
+            src: path.join(__dirname, '../src/main/drivespace.exe'),
+            dest: 'dist/main',
+          },
+        ],
       }),
       alias({
         entries: [
-          { find: '@main', replacement: path.join(__dirname, '../src/main'), },
-        ]
-      })
+          { find: '@main', replacement: path.join(__dirname, '../src/main') },
+        ],
+      }),
     ],
     external: [
       'crypto',
@@ -60,5 +69,5 @@ module.exports = (env = 'production') => {
       'path',
       'electron',
     ],
-  }
-}
+  };
+};

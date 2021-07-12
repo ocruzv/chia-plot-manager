@@ -5,6 +5,7 @@ import { join } from 'path';
 import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
 import is_dev from 'electron-is-dev';
 import dotenv from 'dotenv';
+import { platform } from 'os';
 
 import { generatePlot } from './helpers/bash';
 import { hasEnoughSpaceMain, hasOldPlotsInDirMain } from './helpers/disk';
@@ -66,9 +67,13 @@ ipcMain.handle('select-file', async () => {
   }
 });
 
-ipcMain.handle('has-enough-space', (_, drive, spaceNeeded) =>
-  hasEnoughSpaceMain(drive, spaceNeeded)
-);
+ipcMain.handle('has-enough-space', (_, drive, spaceNeeded) => {
+  let parsedDrive = drive;
+  if (platform() === 'win32') {
+    parsedDrive = drive[0];
+  }
+  return hasEnoughSpaceMain(parsedDrive, spaceNeeded);
+});
 
 ipcMain.handle('has-old-plots-in-dir', (_, directory) =>
   hasOldPlotsInDirMain(directory)

@@ -15,7 +15,7 @@
     "dev:ele": "node script/build --env=development --watch",
     "build:vue": "vite build",
     "build:ele": "node script/build --env=production",
-    "build": "npm run build:vue && npm run build:ele && electron-builder",
+    "build": "npm run build:vue && npm run build:ele && electron-builder --windows",
     "build:publish": "npm run build:vue && npm run build:ele && electron-builder --linux --windows --macos --publish=onTagOrDraft",
     "lint:script": "eslint --ext .ts,vue --ignore-path .gitignore ."
   },
@@ -38,14 +38,9 @@
       "publish": "github"
     },
     "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
+      "target": "portable",
+      "defaultArch": "x64",
+      "asar": false,
       "artifactName": "${productName}.${ext}",
       "publish": "github"
     },
@@ -101,6 +96,7 @@
     "ora": "^5.4.1",
     "postcss": "^8.3.2",
     "prettier": "^2.3.1",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-esbuild": "^3.0.2",
     "sass": "^1.26.10",
     "stylelint": "^13.13.1",
