@@ -1,23 +1,5 @@
 <template>
-  <div
-    class="
-      bg-black
-      text-white
-      flex flex-col
-      w-full
-      rounded
-      overflow-y-auto
-      p-4
-      relative
-      h-28
-    "
-  >
-    <box-icon
-      name="x"
-      color="white"
-      class="cursor-pointer absolute top-4 right-4"
-      @click="$emit('close')"
-    ></box-icon>
+  <div class="console">
     <p
       v-for="(log, index) in logHistory"
       :key="index"
@@ -38,6 +20,19 @@
         default: () => [],
       },
     },
-    emits: ['close'],
   });
 </script>
+
+<style scoped>
+  .console {
+    background-color: black;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    max-width: 100vw;
+    border-radius: 4px;
+    overflow-y: auto;
+    padding: 16px;
+    height: 124px;
+  }
+</style>

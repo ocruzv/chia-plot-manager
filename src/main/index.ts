@@ -16,8 +16,8 @@ let win: BrowserWindow | null = null;
 class createWin {
   constructor() {
     win = new BrowserWindow({
-      width: 700,
-      height: 700,
+      width: 550,
+      height: 230,
       webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true,

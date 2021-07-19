@@ -1,7 +1,20 @@
 <template>
-  <div class="main">
-    <router-view />
-  </div>
+  <a-layout id="main">
+    <a-layout-header class="header">
+      <div class="logo">
+        <img src="@/assets/logo.svg" alt="Chia Plot Manager" />
+      </div>
+      <a-menu mode="horizontal" class="main-menu">
+        <a-menu-item key="plotter">Plotter</a-menu-item>
+        <a-menu-item key="settings">Settings</a-menu-item>
+        <a-menu-item key="about">About</a-menu-item>
+      </a-menu>
+    </a-layout-header>
+
+    <a-layout-content class="main-body">
+      <router-view />
+    </a-layout-content>
+  </a-layout>
 </template>
 
 <script lang="ts">
@@ -64,10 +77,32 @@
   });
 </script>
 
-<style scoped>
-  .main {
-    @apply h-full w-full bg-gray-800 text-white;
+<style>
+  #main {
+    background-color: #f6fbfb;
+  }
 
-    min-height: 100vh;
+  #main .ant-layout-header {
+    display: flex;
+    align-items: center;
+    background: #68c60e;
+  }
+
+  .logo img {
+    width: 200px;
+    height: auto;
+    margin: 0 20px;
+    float: left;
+  }
+
+  .main-body {
+    height: calc(100vh - 64px);
+  }
+
+  .main-menu {
+    line-height: 64px;
+    margin-left: auto;
+    float: right;
+    background-color: #68c60e;
   }
 </style>
