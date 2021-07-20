@@ -2,12 +2,18 @@
   <a-layout id="main">
     <a-layout-header class="header">
       <div class="logo">
-        <img src="@/assets/logo.svg" alt="Chia Plot Manager" />
+        <router-link to="/">
+          <img src="@/assets/logo.svg" alt="Chia Plot Manager" />
+        </router-link>
       </div>
-      <a-menu mode="horizontal" class="main-menu">
-        <a-menu-item key="plotter">Plotter</a-menu-item>
+      <a-menu
+        :selected-keys="[$route.name]"
+        mode="horizontal"
+        class="main-menu"
+        @click="navigate"
+      >
+        <a-menu-item key="index">Plotter</a-menu-item>
         <a-menu-item key="settings">Settings</a-menu-item>
-        <a-menu-item key="about">About</a-menu-item>
       </a-menu>
     </a-layout-header>
 
@@ -18,7 +24,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted } from 'vue';
+  import { defineComponent, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
 
   const electron = require('electron');
@@ -35,6 +41,16 @@
       const store = useMainStore();
       const { getWorkerConfig } = useConfig();
       const { createPlot } = usePlots();
+
+      const selectedMenuItem = ref([]);
+
+      function navigate(data) {
+        if (data.key === 'index') {
+          router.push('/');
+        } else {
+          router.push(data.key);
+        }
+      }
 
       onMounted(() => {
         ipc.on('new-plot', (_, pid, plotData) => {
@@ -73,6 +89,11 @@
       });
 
       router.push('/');
+
+      return {
+        selectedMenuItem,
+        navigate,
+      };
     },
   });
 </script>
@@ -96,12 +117,12 @@
   }
 
   .main-body {
-    height: calc(100vh - 64px);
+    min-height: calc(100vh - 64px);
   }
 
   .main-menu {
     line-height: 64px;
-    margin-left: auto;
+    margin-left: auto !important;
     float: right;
     background-color: #68c60e;
   }

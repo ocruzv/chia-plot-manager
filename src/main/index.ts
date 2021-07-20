@@ -17,7 +17,7 @@ class createWin {
   constructor() {
     win = new BrowserWindow({
       width: 550,
-      height: 230,
+      height: 250,
       webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true,

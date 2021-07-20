@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div>
     <header class="bg-gray-600 py-4 text-center">
       <h1>About</h1>
     </header>

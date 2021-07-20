@@ -1,36 +1,188 @@
 <template>
-  <div class="flex flex-col">
-    <header class="bg-gray-600 py-4 text-center">
-      <h1>Plotting Settings</h1>
-    </header>
-    <main class="flex flex-col px-8 py-12 space-y-4">
-      <div
-        v-if="state.madmaxBinPath"
-        class="flex space-x-4 items-center justify-start pb-4"
-      >
-        <router-link to="/">Go back</router-link>
-      </div>
-      <Input
-        :model-value="state.madmaxBinPath"
-        label="Madmax Plotter Path (chia_plot file)"
-        readonly
-        @click="chooseMadmaxPath"
-      />
+  <div>
+    <a-page-header
+      style="border: 1px solid rgb(235, 237, 240)"
+      title="Settings"
+      sub-title="Configure your plotter"
+      @back="$router.push('/')"
+    />
+    <a-row type="flex" justify="center" class="content">
+      <a-col span="22">
+        <a-form layout="vertical">
+          <a-form-item label="Madmax Plotter Path">
+            <template #help>
+              <div>
+                Please choose the path to your chia_plot file
 
+                <a-divider type="vertical" />
+
+                <a-button
+                  type="link"
+                  @click="
+                    openLinkInBrowser(
+                      'https://github.com/madMAx43v3r/chia-plotter#install'
+                    )
+                  "
+                  >How to install Madmax Plotter?
+                </a-button>
+              </div>
+            </template>
+            <a-input
+              :value="state.madmaxBinPath"
+              placeholder="C:\madmax_path\build\chia_plot.exe"
+              readonly
+              @click="chooseMadmaxPath"
+            >
+              <template #suffix>
+                <a-button
+                  v-if="!state.madmaxBinPath"
+                  type="primary"
+                  size="small"
+                  @click="chooseMadmaxPath"
+                >
+                  Browse
+                </a-button>
+                <a-button
+                  v-else
+                  type="primary"
+                  size="small"
+                  danger
+                  @click="state.madmaxBinPath = ''"
+                >
+                  Remove
+                </a-button>
+              </template>
+            </a-input>
+          </a-form-item>
+
+          <template v-if="state.madmaxBinPath">
+            <a-divider orientation="left"> Workers </a-divider>
+
+            <a-card
+              v-for="(worker, index) in state.workers"
+              :key="worker.name"
+              class="ml-10 flex flex-col space-y-2"
+            >
+              <template #title>
+                <a-typography-title
+                  v-model:content="worker.name"
+                  :level="4"
+                  editable
+                />
+              </template>
+              <template #extra>
+                <a-space>
+                  <a-switch
+                    checked-children="Enabled"
+                    un-checked-children="Disabled"
+                  />
+                  <a-popconfirm title="Sure to delete?">
+                    <a-button size="small" danger>Delete Worker</a-button>
+                  </a-popconfirm>
+                </a-space>
+              </template>
+
+              <a-form-item
+                label="Pool Public Key or Pool Contract Address"
+                extra="Pool Key if you want to solo-farm or your NFT Contract Address (starting with xch)"
+              >
+                <a-input
+                  v-model:value="worker.poolPublicKey"
+                  placeholder="xch185x8f7x8erd7xd4yhyfts4w28xazr96rv7arm2f4028klvdknsmss0ez7q"
+                  @blur="handlePoolPublicKeyBlur($event, index)"
+                />
+              </a-form-item>
+
+              <a-form-item label="Farmer Public Key">
+                <a-input
+                  v-model:value="worker.farmerPublicKey"
+                  placeholder="8d3f03cee98d3748b333a7320fa0b4af0e14eaa09f45b4f622ad73d7b3a41eeba93f3c1f2c331df3bb1a9c552d157c57"
+                />
+              </a-form-item>
+
+              <a-form-item
+                label="Temporary directory"
+                extra="Needs ~220 GiB. Your temporary plot files will be written here. A fast NVMe is recommended"
+              >
+                <a-input
+                  :value="worker.tempDir"
+                  placeholder="D:\temp_plots"
+                  readonly
+                  @click="chooseDir('tempDir', index)"
+                >
+                  <template #suffix>
+                    <a-button
+                      v-if="!worker.tempDir"
+                      type="primary"
+                      size="small"
+                      @click="chooseDir('tempDir', index)"
+                    >
+                      Browse
+                    </a-button>
+                    <a-button
+                      v-else
+                      type="primary"
+                      size="small"
+                      danger
+                      @click="worker.tempDir = ''"
+                    >
+                      Remove
+                    </a-button>
+                  </template>
+                </a-input>
+              </a-form-item>
+
+              <a-form-item
+                label="Final directory"
+                extra="Needs ~100 GiB. It can be a traditional HDD"
+              >
+                <a-input
+                  :value="worker.finalDir"
+                  placeholder="E:\portable_plots"
+                  readonly
+                  @click="chooseDir('finalDir', index)"
+                >
+                  <template #suffix>
+                    <a-button
+                      v-if="!worker.finalDir"
+                      type="primary"
+                      size="small"
+                      @click="chooseDir('finalDir', index)"
+                    >
+                      Browse
+                    </a-button>
+                    <a-button
+                      v-else
+                      type="primary"
+                      size="small"
+                      danger
+                      @click="worker.finalDir = ''"
+                    >
+                      Remove
+                    </a-button>
+                  </template>
+                </a-input>
+              </a-form-item>
+
+              <a-divider dashed>
+                <a-button type="link">
+                  <PlusSquareOutlined /> Show advanced settings
+                </a-button>
+              </a-divider>
+            </a-card>
+          </template>
+
+          <a-form-item>
+            <a-button type="primary">Save</a-button>
+          </a-form-item>
+        </a-form>
+      </a-col>
       <template v-if="state.madmaxBinPath">
-        <h2>Workers</h2>
         <div
           v-for="(worker, index) in state.workers"
           :key="worker.name"
           class="ml-10 flex flex-col space-y-2"
         >
-          <Input v-model="worker.name" label="Worker Name" />
-          <Input
-            v-model="worker.poolPublicKey"
-            label="Pool Public Key or Pool Contract Address"
-            @blur="handlePoolPublicKeyBlur($event, index)"
-          />
-          <Input v-model="worker.farmerPublicKey" label="Farmer Public Key" />
           <Input
             v-model.number="worker.cpuThreads"
             type="number"
@@ -50,22 +202,10 @@
             label="Plots to create in parallel by this worker"
           />
           <Input
-            :model-value="worker.tempDir"
-            label="Temporary directory, needs ~220 GiB (per plot)"
-            readonly
-            @click="chooseDir('tempDir', index)"
-          />
-          <Input
             :model-value="worker.tempDir2"
             label="Temporary directory 2 (Optional)"
             readonly
             @click="chooseDir('tempDir2', index)"
-          />
-          <Input
-            :model-value="worker.finalDir"
-            label="Final directory, needs ~100 GiB (per plot)"
-            readonly
-            @click="chooseDir('finalDir', index)"
           />
 
           <div v-if="worker.poolPublicKey.startsWith('xch')">
@@ -94,18 +234,8 @@
         </div>
 
         <Button @click="addWorker"> Add Worker </Button>
-
-        <a
-          href="#"
-          @click="
-            openLinkInBrowser(
-              'https://github.com/madMAx43v3r/chia-plotter#install'
-            )
-          "
-          >How to install Madmax Plotter?</a
-        >
       </template>
-    </main>
+    </a-row>
   </div>
 </template>
 
@@ -114,6 +244,8 @@
   import { useLocalStorage } from '@vueuse/core';
   const electron = require('electron');
   const ipc = electron.ipcRenderer;
+
+  import { PlusSquareOutlined } from '@ant-design/icons-vue';
 
   import { PlotSettingsStore } from '@/types/Store';
 
@@ -128,6 +260,7 @@
     components: {
       Input,
       Button,
+      PlusSquareOutlined,
     },
     setup() {
       const state = useLocalStorage<PlotSettingsStore>('state', defaultState);
@@ -182,3 +315,9 @@
     },
   });
 </script>
+
+<style scoped>
+  .content {
+    margin: 24px 0;
+  }
+</style>
