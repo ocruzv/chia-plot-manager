@@ -61,7 +61,6 @@ export function generatePlot(
 
     if (dataString.includes('[P1]')) {
       win.webContents.send('set-phase', plot.pid, 1);
-      win.webContents.send('plot-finished', plot.pid);
     }
     if (dataString.includes('[P2]')) {
       win.webContents.send('set-phase', plot.pid, 2);
