@@ -30,6 +30,12 @@ export function generatePlot(
     plotArgs.farmerPublicKey,
     '-u',
     String(plotArgs.buckets),
+    '-v',
+    `${
+      plotArgs.buckets3 ? String(plotArgs.buckets3) : String(plotArgs.buckets)
+    }`,
+    '-K',
+    `${plotArgs.rmulti2 ? String(plotArgs.rmulti2) : '1'}`,
   ]);
 
   plot.on('error', (error) => {
@@ -51,8 +57,11 @@ export function generatePlot(
       win.webContents.send('new-plot', plot.pid, plotData);
     }
 
+    win.webContents.send('console-message', plot.pid, dataString);
+
     if (dataString.includes('[P1]')) {
       win.webContents.send('set-phase', plot.pid, 1);
+      win.webContents.send('plot-finished', plot.pid);
     }
     if (dataString.includes('[P2]')) {
       win.webContents.send('set-phase', plot.pid, 2);
@@ -79,7 +88,6 @@ export function generatePlot(
       win.webContents.send('set-phase', plot.pid, 5);
     }
 
-    win.webContents.send('console-message', plot.pid, dataString);
     if (dataString.includes('finished, took')) {
       win.webContents.send('plot-finished', plot.pid);
     }

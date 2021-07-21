@@ -1,14 +1,13 @@
 import { unref } from 'vue';
+import { useIpcRenderer } from '@vueuse/electron';
 import { useMainStore } from '@/stores/main';
 import { Worker } from '@/types/Store';
 
 import useConfig from '@/use/useConfig';
 import { hasEnoughSpaceInDisk, hasOldPlotsInDir } from '@/helpers/common';
 
-const electron = require('electron');
-const ipc = electron.ipcRenderer;
-
 export default function usePlots() {
+  const ipcRenderer = useIpcRenderer();
   const store = useMainStore();
   const { madmaxBinPath } = useConfig();
 
@@ -41,13 +40,14 @@ export default function usePlots() {
   }
 
   async function createPlot(workerData: Worker): Promise<void> {
+    if (store.stopAfterQueue || workerData.isDisabled) return;
+
     try {
       if (
         (await canCreatePlot(workerData)) &&
-        !store.stopAfterQueue &&
         (workerData.parallelJobs || 1) > getWorkerJobs(workerData.name).length
       ) {
-        ipc.send(
+        ipcRenderer.send(
           'create-plot',
           JSON.stringify(workerData),
           unref(madmaxBinPath)
@@ -59,7 +59,7 @@ export default function usePlots() {
   }
 
   function stopPlot(pid: string): void {
-    ipc.send('stop-plot', pid);
+    ipcRenderer.send('stop-plot', pid);
   }
 
   return { getWorkerJobs, createPlot, stopPlot };

@@ -1,100 +1,69 @@
 <template>
-  <div class="flex flex-col">
-    <header class="bg-gray-600 py-4 text-center">
-      <h1>Ocruzv's Plot Manager</h1>
-    </header>
-    <main class="flex flex-col px-8 py-12 justify-center items-center">
-      <div class="w-full bg-gray-500 rounded my-8">
-        <table v-if="plots.length" class="w-full text-center">
-          <thead>
-            <tr>
-              <th>Worker</th>
-              <th>PID</th>
-              <th>Start</th>
-              <th>Elapsed Time</th>
-              <th>Phase</th>
-              <th>Progress</th>
-              <!-- <th>Temp Size</th> -->
-              <th>Logs</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="plot in plots" :key="plot.pid">
-              <td>
-                {{ plot.worker }}
-              </td>
-              <td>
-                {{ plot.pid }}
-              </td>
-              <td>{{ format(new Date(plot.startTime), 'Pp') }}</td>
-              <td>{{ formatDistanceToNow(new Date(plot.startTime)) }}</td>
-              <td class="flex flex-row">
-                <template v-if="plot.phase < 5"> {{ plot.phase }}/4 </template>
-                <template v-else-if="plot.phase === 5">
-                  Copying to final path
-                </template>
-                <div
-                  class="
-                    animate-spin
-                    rounded-full
-                    h-4
-                    w-4
-                    border-b-2 border-white
-                    ml-2
-                  "
-                ></div>
-              </td>
-              <td>{{ getPlotProgress(plot) }}%</td>
-              <td width="16">
-                <box-icon
-                  name="message-square-detail"
-                  color="white"
-                  class="cursor-pointer"
-                  @click="openConsole(plot.pid)"
-                ></box-icon>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <main class="index-main">
+    <div class="w-full bg-gray-500 rounded my-8">
+      <a-row v-if="formattedPlots.length" type="flex" justify="center">
+        <a-col :span="22">
+          <a-table
+            :data-source="formattedPlots"
+            :columns="columns"
+            :pagination="false"
+            row-key="pid"
+          >
+            <template #progress="{ record }">
+              <a-progress
+                type="circle"
+                :percent="getPlotProgress(record)"
+                :width="40"
+              />
+            </template>
+            <template #actions="{ record }">
+              <a-popconfirm
+                title="Are you sure?"
+                @confirm="stopPlot(record.pid)"
+              >
+                <a-button size="small">Stop this task</a-button>
+              </a-popconfirm>
+            </template>
+            <template #expandedRowRender="{ record }">
+              <Console
+                v-if="record.consoleHistory.length"
+                class="console"
+                :log-history="record.consoleHistory"
+              />
+            </template>
+          </a-table>
+        </a-col>
+      </a-row>
+    </div>
 
-      <Console
-        v-if="selectedPlotHistory.length"
-        class="mb-4"
-        :log-history="selectedPlotHistory"
-        @close="selectedPid = null"
-      />
-
-      <div class="flex flex-col space-x-4">
-        <label v-if="plots.length" class="mb-4 flex items-center">
-          <input
-            :value="stopAfterQueue"
-            type="checkbox"
-            class="mr-2"
-            @change="toggleStopAfterQueue"
-          />
+    <div class="buttons">
+      <a-space direction="vertical">
+        <a-checkbox
+          v-if="plots.length"
+          :checked="stopAfterQueue"
+          @change="toggleStopAfterQueue"
+        >
           Stop plotting after the current queue
-        </label>
-        <Button
+        </a-checkbox>
+        <a-button
           v-if="!plots.length && state.workers.length"
+          type="primary"
+          size="large"
+          class="big-circle-button"
           @click="startPlotting"
         >
+          <PlayCircleOutlined class="play-icon" />
           Start plotting
-        </Button>
-        <Button v-if="!state.workers.length" @click="goToSettings">
+        </a-button>
+        <a-button v-if="!state.workers.length" @click="goToSettings">
           Configure your workers
-        </Button>
-        <Button v-if="plots.length" color="red" @click="stopPlotting"
-          >Stop plotting</Button
-        >
-      </div>
-    </main>
-    <footer class="flex space-x-4 bg-gray-600 items-center justify-center py-4">
-      <router-link to="/settings">Settings</router-link>
-      <span> | </span>
-      <router-link to="/about">About</router-link>
-    </footer>
-  </div>
+        </a-button>
+        <a-button v-if="plots.length" danger block @click="stopPlotting">
+          Stop plotting
+        </a-button>
+      </a-space>
+    </div>
+  </main>
 </template>
 
 <script lang="ts">
@@ -106,13 +75,14 @@
     ref,
     Ref,
     ComputedRef,
+    onActivated,
   } from 'vue';
+  import { PlayCircleOutlined } from '@ant-design/icons-vue';
   import { useRouter } from 'vue-router';
   import { useLocalStorage } from '@vueuse/core';
   import format from 'date-fns/format';
   import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
-  import Button from '@/components/Button.vue';
   import Console from '@/components/Console.vue';
 
   import { defaultState } from '@/helpers/state';
@@ -126,8 +96,8 @@
   export default defineComponent({
     name: 'Index',
     components: {
-      Button,
       Console,
+      PlayCircleOutlined,
     },
     setup() {
       const store = useMainStore();
@@ -168,7 +138,12 @@
 
         const completedPlotLogsCount = 45;
 
-        return ~~((plot.consoleHistory.length / completedPlotLogsCount) * 100);
+        const progressCount = ~~(
+          (plot.consoleHistory.length / completedPlotLogsCount) *
+          100
+        );
+
+        return progressCount <= 100 ? progressCount : 100;
       }
 
       const selectedPlotHistory: ComputedRef<string[]> = computed(() => {
@@ -177,18 +152,48 @@
         return store.plots[selectedPid.value].consoleHistory;
       });
 
-      onMounted(() => {
-        if (!state.value.madmaxBinPath) {
+      function validateConfig() {
+        if (
+          !state.value.madmaxBinPath ||
+          !state.value.workers?.length ||
+          !state.value.workers[0].poolPublicKey ||
+          !state.value.workers[0].finalDir
+        ) {
           window.alert('Please configure first your workers');
 
           goToSettings();
         }
+      }
+
+      onMounted(validateConfig);
+
+      onActivated(validateConfig);
+
+      const phaseDictionarie = {
+        0: 'Starting...',
+        1: '1/4',
+        2: '2/4',
+        3: '3/4',
+        4: '4/4',
+        5: 'Copying to final path...',
+      };
+
+      const plots = computed(() => Object.values(store.plots));
+
+      const formattedPlots = computed(() => {
+        return plots.value.map((plot) => ({
+          ...plot,
+          start: format(new Date(plot.startTime), 'Pp'),
+          elapsedTime: formatDistanceToNow(new Date(plot.startTime)),
+          currentPhase: phaseDictionarie[plot.phase],
+        }));
       });
 
       return {
         startPlotting,
         stopPlotting,
-        plots: computed(() => Object.values(store.plots)),
+        plots,
+        formattedPlots,
         stopAfterQueue: computed(() => store.stopAfterQueue),
         format,
         formatDistanceToNow,
@@ -199,7 +204,81 @@
         selectedPid,
         toggleStopAfterQueue: store.toggleStopAfterQueue,
         getPlotProgress,
+        stopPlot,
+        columns: [
+          {
+            title: 'Worker',
+            dataIndex: 'worker',
+            key: 'worker',
+          },
+          {
+            title: 'PID',
+            dataIndex: 'pid',
+            key: 'pid',
+          },
+          {
+            title: 'Start',
+            dataIndex: 'start',
+            key: 'start',
+          },
+          {
+            title: 'Elapsed Time',
+            dataIndex: 'elapsedTime',
+            key: 'elapsedTime',
+          },
+          {
+            title: 'Current Phase',
+            dataIndex: 'currentPhase',
+            key: 'currentPhase',
+          },
+          {
+            title: 'Progress',
+            key: 'progress',
+            slots: { customRender: 'progress' },
+          },
+          {
+            title: 'Actions',
+            key: 'actions',
+            slots: { customRender: 'actions' },
+          },
+        ],
       };
     },
   });
 </script>
+
+<style scoped>
+  .index-main {
+    min-height: 100%;
+  }
+
+  .big-circle-button {
+    height: 132px;
+    width: 132px;
+    border-radius: 999px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: lighter;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+
+  .play-icon {
+    font-size: 3rem;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    margin: 36px 0;
+  }
+
+  .console {
+    max-width: 90%;
+  }
+</style>

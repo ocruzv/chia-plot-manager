@@ -5,7 +5,7 @@ export const useMainStore = defineStore({
   id: 'main',
   state: () => ({
     plots: {} as { [key: string]: Plot },
-    stopAfterQueue: false as boolean,
+    stopAfterQueue: false,
   }),
   actions: {
     addPlot(pid: string, plot: Plot) {

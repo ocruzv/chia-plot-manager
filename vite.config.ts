@@ -5,6 +5,7 @@ import { join } from 'path';
 import { UserConfig } from 'vite';
 import dotenv from 'dotenv';
 import vue from '@vitejs/plugin-vue';
+import ViteComponents, { AntDesignVueResolver } from 'vite-plugin-components';
 
 dotenv.config({ path: join(__dirname, '.env') });
 const root = join(__dirname, 'src/render');
@@ -32,9 +33,26 @@ const config: UserConfig = {
         },
       },
     }),
+    ViteComponents({
+      customComponentResolvers: [
+        AntDesignVueResolver({
+          importLess: true,
+        }),
+      ],
+    }),
   ],
   optimizeDeps: {
     exclude: ['electron-is-dev', 'electron-store'],
+  },
+  css: {
+    preprocessorOptions: {
+      less: {
+        modifyVars: {
+          'primary-color': '#68C60E',
+        },
+        javascriptEnabled: true,
+      },
+    },
   },
 };
 

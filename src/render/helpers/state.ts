@@ -13,6 +13,7 @@ export function newWorker(): Worker {
     buckets: 256,
     parallelJobs: 1,
     oldPlotsDir: '',
+    isDisabled: false,
   };
 }
 
