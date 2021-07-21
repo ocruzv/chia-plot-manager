@@ -40,8 +40,7 @@ export default function usePlots() {
   }
 
   async function createPlot(workerData: Worker): Promise<void> {
-    console.log('stopAfterQueue', store.stopAfterQueue);
-    if (store.stopAfterQueue) return;
+    if (store.stopAfterQueue || workerData.isDisabled) return;
 
     try {
       if (
