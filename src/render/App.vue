@@ -25,10 +25,8 @@
 
 <script lang="ts">
   import { defineComponent, onMounted, ref } from 'vue';
+  import { useIpcRendererOn } from '@vueuse/electron';
   import { useRouter } from 'vue-router';
-
-  const electron = require('electron');
-  const ipc = electron.ipcRenderer;
 
   import { useMainStore } from '@/stores/main';
   import useConfig from '@/use/useConfig';
@@ -39,7 +37,7 @@
     setup() {
       const router = useRouter();
       const store = useMainStore();
-      const { getWorkerConfig } = useConfig();
+      const { getWorkerConfig, onOpenApp } = useConfig();
       const { createPlot } = usePlots();
 
       const selectedMenuItem = ref([]);
@@ -53,23 +51,22 @@
       }
 
       onMounted(() => {
-        ipc.on('new-plot', (_, pid, plotData) => {
+        onOpenApp();
+
+        useIpcRendererOn('new-plot', (_, pid, plotData) => {
           store.addPlot(pid, plotData);
         });
-        ipc.on('set-phase', (_, pid, phase) => {
+        useIpcRendererOn('set-phase', (_, pid, phase) => {
           store.updatePlot(pid, { phase });
         });
-        ipc.on('console-message', (_, pid, data) => {
+        useIpcRendererOn('console-message', (_, pid, data) => {
           store.addHistoryToPlot(pid, data);
         });
-        ipc.on('plot-finished', (_, pid: string) => {
+        useIpcRendererOn('plot-finished', (_, pid: string) => {
           const plotData = { ...store.plots[pid] };
           store.removePlot(pid);
 
           const workerConfig = getWorkerConfig(plotData.worker);
-
-          console.log('plotData', plotData);
-          console.log('workerConfig', workerConfig);
 
           if (workerConfig) {
             createPlot(workerConfig);
@@ -79,7 +76,7 @@
             store.stopAfterQueue = false;
           }
         });
-        ipc.on('plot-exit', (_, pid) => {
+        useIpcRendererOn('plot-exit', (_, pid) => {
           store.removePlot(pid);
 
           if (!Object.keys(store.plots).length) {
@@ -99,8 +96,13 @@
 </script>
 
 <style>
+  #app {
+    min-height: 100vh;
+  }
+
   #main {
     background-color: #f6fbfb;
+    min-height: 100vh;
   }
 
   #main .ant-layout-header {
@@ -118,6 +120,10 @@
 
   .main-body {
     min-height: calc(100vh - 64px);
+    max-width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .main-menu {

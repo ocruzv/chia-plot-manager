@@ -29,7 +29,6 @@
     color: #fff;
     display: flex;
     flex-direction: column;
-    max-width: 100vw;
     border-radius: 4px;
     overflow-y: auto;
     padding: 16px;

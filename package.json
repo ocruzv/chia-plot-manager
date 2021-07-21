@@ -1,6 +1,6 @@
 {
   "name": "ocruzv-chia-plot-manager",
-  "version": "0.3.5",
+  "version": "0.4.0",
   "main": "dist/main/build.js",
   "description": "Chia Plot Manager compatible with MadMax Plotter",
   "author": {
@@ -15,7 +15,7 @@
     "dev:ele": "node script/build --env=development --watch",
     "build:vue": "vite build",
     "build:ele": "node script/build --env=production",
-    "build": "npm run build:vue && npm run build:ele && electron-builder --windows",
+    "build": "npm run build:vue && npm run build:ele && electron-builder",
     "build:publish": "npm run build:vue && npm run build:ele && electron-builder --linux --windows --macos --publish=onTagOrDraft",
     "lint:script": "eslint --ext .ts,vue --ignore-path .gitignore ."
   },
@@ -62,13 +62,13 @@
   "dependencies": {
     "@ant-design/icons-vue": "^6.0.1",
     "@headlessui/vue": "^1.2.0",
-    "@vueuse/core": "^5.0.3",
+    "@vueuse/core": "^5.1.4",
+    "@vueuse/electron": "^5.1.4",
     "ant-design-vue": "^2.2.2",
     "date-fns": "^2.22.1",
     "diskspace": "^2.0.0",
     "electron-is-dev": "^2.0.0",
-    "element-plus": "latest",
-    "pinia": "^2.0.0-beta.2",
+    "pinia": "^2.0.0-beta.5",
     "vue": "^3.1.1",
     "vue-router": "^4.0.0-beta.13"
   },

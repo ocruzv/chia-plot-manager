@@ -1,35 +1,45 @@
 <template>
-  <div class="flex flex-col">
-    <main class="flex flex-col px-8 py-12 justify-center items-center">
-      <div class="w-full bg-gray-500 rounded my-8">
-        <a-row v-if="formattedPlots.length" type="flex" justify="center">
-          <a-col :span="22">
-            <a-table :data-source="formattedPlots" :columns="columns">
-              <template #progress="{ record }">
-                <a-progress
-                  type="circle"
-                  :percent="getPlotProgress(record)"
-                  :width="40"
-                />
-              </template>
-              <template #actions>
+  <main class="index-main">
+    <div class="w-full bg-gray-500 rounded my-8">
+      <a-row v-if="formattedPlots.length" type="flex" justify="center">
+        <a-col :span="22">
+          <a-table
+            :data-source="formattedPlots"
+            :columns="columns"
+            :pagination="false"
+            row-key="pid"
+          >
+            <template #progress="{ record }">
+              <a-progress
+                type="circle"
+                :percent="getPlotProgress(record)"
+                :width="40"
+              />
+            </template>
+            <template #actions="{ record }">
+              <a-popconfirm
+                title="Are you sure?"
+                @confirm="stopPlot(record.pid)"
+              >
                 <a-button size="small">Stop this task</a-button>
-              </template>
-              <template #expandedRowRender="{ record }">
-                <Console
-                  v-if="record.consoleHistory.length"
-                  :log-history="record.consoleHistory"
-                />
-              </template>
-            </a-table>
-          </a-col>
-        </a-row>
-      </div>
+              </a-popconfirm>
+            </template>
+            <template #expandedRowRender="{ record }">
+              <Console
+                v-if="record.consoleHistory.length"
+                class="console"
+                :log-history="record.consoleHistory"
+              />
+            </template>
+          </a-table>
+        </a-col>
+      </a-row>
+    </div>
 
-      <div class="buttons">
+    <div class="buttons">
+      <a-space direction="vertical">
         <a-checkbox
           v-if="plots.length"
-          v-model:checked="stopAfterQueue"
           :checked="stopAfterQueue"
           @change="toggleStopAfterQueue"
         >
@@ -48,12 +58,12 @@
         <a-button v-if="!state.workers.length" @click="goToSettings">
           Configure your workers
         </a-button>
-        <a-button v-if="plots.length" color="red" @click="stopPlotting">
+        <a-button v-if="plots.length" danger block @click="stopPlotting">
           Stop plotting
         </a-button>
-      </div>
-    </main>
-  </div>
+      </a-space>
+    </div>
+  </main>
 </template>
 
 <script lang="ts">
@@ -65,6 +75,7 @@
     ref,
     Ref,
     ComputedRef,
+    onActivated,
   } from 'vue';
   import { PlayCircleOutlined } from '@ant-design/icons-vue';
   import { useRouter } from 'vue-router';
@@ -141,13 +152,22 @@
         return store.plots[selectedPid.value].consoleHistory;
       });
 
-      onMounted(() => {
-        if (!state.value.madmaxBinPath) {
+      function validateConfig() {
+        if (
+          !state.value.madmaxBinPath ||
+          !state.value.workers?.length ||
+          !state.value.workers[0].poolPublicKey ||
+          !state.value.workers[0].finalDir
+        ) {
           window.alert('Please configure first your workers');
 
           goToSettings();
         }
-      });
+      }
+
+      onMounted(validateConfig);
+
+      onActivated(validateConfig);
 
       const phaseDictionarie = {
         0: 'Starting...',
@@ -184,6 +204,7 @@
         selectedPid,
         toggleStopAfterQueue: store.toggleStopAfterQueue,
         getPlotProgress,
+        stopPlot,
         columns: [
           {
             title: 'Worker',
@@ -194,7 +215,6 @@
             title: 'PID',
             dataIndex: 'pid',
             key: 'pid',
-            rowkey: true,
           },
           {
             title: 'Start',
@@ -213,13 +233,12 @@
           },
           {
             title: 'Progress',
-            dataIndex: '',
             key: 'progress',
             slots: { customRender: 'progress' },
           },
           {
             title: 'Actions',
-            dataIndex: '',
+            key: 'actions',
             slots: { customRender: 'actions' },
           },
         ],
@@ -229,6 +248,10 @@
 </script>
 
 <style scoped>
+  .index-main {
+    min-height: 100%;
+  }
+
   .big-circle-button {
     height: 132px;
     width: 132px;
@@ -252,6 +275,10 @@
     align-items: center;
     justify-content: center;
     flex: 1;
-    margin: 16px;
+    margin: 36px 0;
+  }
+
+  .console {
+    max-width: 90%;
   }
 </style>
