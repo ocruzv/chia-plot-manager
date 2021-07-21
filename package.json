@@ -1,6 +1,6 @@
 {
   "name": "ocruzv-chia-plot-manager",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "dist/main/build.js",
   "description": "Chia Plot Manager compatible with MadMax Plotter",
   "author": {
@@ -22,9 +22,6 @@
   "build": {
     "appId": "com.ocruzv.plot-manager",
     "productName": "Ocruzv Chia Plot Manager",
-    "electronDownload": {
-      "mirror": "https://npm.taobao.org/mirrors/electron/"
-    },
     "files": [
       "!node_modules",
       "dist/main/**",
