@@ -16,10 +16,14 @@ export default function usePlots() {
   }
 
   async function canCreatePlot(worker: Worker): Promise<boolean> {
-    const enoughSpace = await hasEnoughSpaceInDisk(worker.finalDir, 100);
+    const enoughSpace = worker.finalDir.some(
+      async (finalDir) => await hasEnoughSpaceInDisk(finalDir, 100)
+    );
 
     if (!enoughSpace && !worker.oldPlotsDir) {
-      throw new Error(`Final directory hasn't enough free space in disk`);
+      throw new Error(
+        'None of the final directories has enough free space in disk'
+      );
     }
 
     if (worker.oldPlotsDir && !worker.poolPublicKey.startsWith('xch')) {
