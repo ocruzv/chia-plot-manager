@@ -1,4 +1,4 @@
-import { computed } from 'vue';
+import { computed, unref } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
 
 import { PlotSettingsStore } from '@/types/Store';
@@ -9,6 +9,23 @@ export default function useConfig() {
 
   function onOpenApp() {
     state.value.stopAfterQueue = false;
+
+    upgradeState();
+  }
+
+  function upgradeState() {
+    // Change finalDir from string to string[]
+    state.value.workers = unref(state).workers.map((worker) => {
+      const finalWorker = { ...worker };
+
+      if (finalWorker.finalDir && typeof finalWorker.finalDir === 'string') {
+        finalWorker.finalDir = [finalWorker.finalDir];
+      }
+
+      if (!finalWorker.finalDir?.length) finalWorker.finalDir = [''];
+
+      return finalWorker;
+    });
   }
 
   function getWorkerConfig(workerName: string) {

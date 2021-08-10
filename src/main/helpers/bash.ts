@@ -15,6 +15,12 @@ export function generatePlot(
   madmaxBinPath: string,
   win: BrowserWindow
 ): void {
+  const finalDir = plotArgs.finalDir.find(
+    async (finalDir) => await hasEnoughSpaceMain(finalDir, 100)
+  );
+
+  if (!finalDir) return;
+
   const plot = spawn(madmaxBinPath, [
     '-r',
     String(plotArgs.cpuThreads),
@@ -23,7 +29,7 @@ export function generatePlot(
     '-2',
     `${plotArgs.tempDir2 ? plotArgs.tempDir2 : plotArgs.tempDir}/`,
     '-d',
-    `${plotArgs.finalDir}/`,
+    `${finalDir}/`,
     `${plotArgs.poolPublicKey.startsWith('xch') ? '-c' : '-p'}`,
     plotArgs.poolPublicKey,
     '-f',
@@ -50,7 +56,7 @@ export function generatePlot(
         worker: plotArgs.name,
         startTime: new Date(),
         tempDir: plotArgs.tempDir,
-        finalDir: plotArgs.finalDir,
+        finalDir,
         phase: 0,
         consoleHistory: [],
       };
@@ -76,7 +82,7 @@ export function generatePlot(
       plotArgs.poolPublicKey.startsWith('xch') &&
       plotArgs.oldPlotsDir
     ) {
-      const hasEnoughSpace = await hasEnoughSpaceMain(plotArgs.finalDir, 100);
+      const hasEnoughSpace = await hasEnoughSpaceMain(finalDir, 100);
       const hasOldPlotsInDir = await hasOldPlotsInDirMain(plotArgs.oldPlotsDir);
 
       if (!hasEnoughSpace && plotArgs.oldPlotsDir && hasOldPlotsInDir) {

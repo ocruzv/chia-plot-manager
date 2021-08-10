@@ -142,35 +142,63 @@
                 </a-form-item>
 
                 <a-form-item
-                  label="Final directory"
-                  extra="Needs ~100 GiB. It can be a traditional HDD"
+                  label="Final directories"
+                  extra="Needs ~100 GiB. It can be a traditional HDD. You can define multiple final directories if you want to fill all of them"
                 >
-                  <a-input
-                    :value="worker.finalDir"
-                    placeholder="E:\portable_plots"
-                    readonly
-                    @click="chooseDir('finalDir', index)"
+                  <a-space
+                    direction="vertical"
+                    :style="{
+                      width: '100%',
+                    }"
                   >
-                    <template #suffix>
-                      <a-button
-                        v-if="!worker.finalDir"
-                        type="primary"
-                        size="small"
-                        @click="chooseDir('finalDir', index)"
-                      >
-                        Browse
-                      </a-button>
-                      <a-button
-                        v-else
-                        type="primary"
-                        size="small"
-                        danger
-                        @click="worker.finalDir = ''"
-                      >
-                        Remove
-                      </a-button>
-                    </template>
-                  </a-input>
+                    <a-input
+                      v-for="(finalDir, dirIndex) in worker.finalDir"
+                      :key="dirIndex"
+                      :value="finalDir"
+                      placeholder="E:\portable_plots"
+                      readonly
+                      @click="chooseDir('finalDir', index, dirIndex)"
+                    >
+                      <template #suffix>
+                        <a-button
+                          v-if="
+                            !worker.finalDir?.length ||
+                            worker.finalDir[dirIndex] === ''
+                          "
+                          type="primary"
+                          size="small"
+                          @click="chooseDir('finalDir', index, dirIndex)"
+                        >
+                          Browse
+                        </a-button>
+                        <template v-else>
+                          <a-space>
+                            <a-button
+                              type="primary"
+                              size="small"
+                              danger
+                              @click="
+                                dirIndex === 0
+                                  ? (worker.finalDir[0] = '')
+                                  : worker.finalDir.splice(dirIndex, 1)
+                              "
+                            >
+                              Remove
+                            </a-button>
+
+                            <a-button
+                              v-if="dirIndex === worker.finalDir.length - 1"
+                              type="primary"
+                              size="small"
+                              @click="worker.finalDir.push('')"
+                            >
+                              Add one more
+                            </a-button>
+                          </a-space>
+                        </template>
+                      </template>
+                    </a-input>
+                  </a-space>
                 </a-form-item>
 
                 <a-divider dashed>
@@ -372,16 +400,28 @@
 
       async function chooseDir(
         type: 'tempDir' | 'finalDir' | 'tempDir2' | 'oldPlotsDir',
-        workerIndex = 0
+        workerIndex = 0,
+        finalDirIndex = 0
       ) {
         const dirs = await ipc.invoke('select-dirs');
 
         if (dirs.length) {
           if (
             type === 'oldPlotsDir' &&
-            dirs[0] === state.value.workers[workerIndex].finalDir
+            state.value.workers[workerIndex].finalDir.includes(dirs[0])
           )
             return;
+
+          if (type === 'finalDir') {
+            if (state.value.workers[workerIndex].finalDir.includes(dirs[0])) {
+              alert('That path is already added, please choose one different');
+            } else {
+              state.value.workers[workerIndex].finalDir[finalDirIndex] =
+                dirs[0];
+            }
+            return;
+          }
+
           state.value.workers[workerIndex][type] = dirs[0];
         }
       }

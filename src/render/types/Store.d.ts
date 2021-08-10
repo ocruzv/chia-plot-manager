@@ -7,7 +7,7 @@ export interface Worker {
   buckets3?: number;
   tempDir: string;
   tempDir2?: string;
-  finalDir: string;
+  finalDir: string[];
   parallelJobs?: number;
   oldPlotsDir?: string;
   rmulti2?: number;

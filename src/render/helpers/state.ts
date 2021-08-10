@@ -8,7 +8,7 @@ export function newWorker(): Worker {
     cpuThreads: 4,
     tempDir: '',
     tempDir2: '',
-    finalDir: '',
+    finalDir: [''],
     name: generateName(),
     buckets: 256,
     parallelJobs: 1,

@@ -23,6 +23,7 @@ This is a Multiplatform (Windows, Linux, MacOS) [Chia](https://www.chia.net/) Pl
 - It will start a new plot immediatelly after a plot is finished, so it's unattended plotting
 - It does support the new pool protocol (Portable Plots)! (If you're using the latest madMax version!!!)
 - Replot old (static) plots. The plot manager will remove old plots gradually and automagically when you create portable (plot protocol) plots, this way you'll not worry on deleting them manually and maximize possible gains.
+- Multiple final directories per worker, this will help you to fill all your hard drives practically without your attention.
 
 ## How to use
 
@@ -43,9 +44,11 @@ The remotion will occur in phase 4, so you'll maximize your chances to win with 
 
 ![Replot Diagram](https://user-images.githubusercontent.com/3529184/124793064-3e728f80-df13-11eb-87c2-4c1a6d9739a2.png)
 
-## Donations
+## Support
 
-Chia, of course: `xch187wm2nt4y7upp2jtr9zcprevcrw7cnnh5wllug8rfh9ge8h3mx2qshc9xx`
+I've been developing this project on my free time, if you find it useful for you and your profits, please consider making an small donation :) 
+
+Chia: `xch187wm2nt4y7upp2jtr9zcprevcrw7cnnh5wllug8rfh9ge8h3mx2qshc9xx`
 
 BTC: `15VJPYrZWPQXZvdWzpc8vKYV42QmzS6x6G`
 
@@ -54,9 +57,11 @@ ETH: `0xEb223E52E91BCA097E3D62834F487131858A5c93`
 DOGE: `DCaAXbnnvSCeu2uTTTq2vdXtwcBwtiT5Q4`
 ## Roadmap
 
+- Start new plot while transfer to destination
 - Support for official plotter
 - Configurable delay to start parallel plotting
 - Space Left/Space used indicator
+- Multiple old plots directory (Multiple final directories style)
 - Suggest more! Open an issue here in Github :)
 
 ## Development
